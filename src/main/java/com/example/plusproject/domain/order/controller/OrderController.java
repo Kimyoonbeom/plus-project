@@ -2,6 +2,7 @@ package com.example.plusproject.domain.order.controller;
 
 import com.example.plusproject.common.dto.AuthUser;
 import com.example.plusproject.domain.order.dto.request.OrderCreateRequest;
+import com.example.plusproject.domain.order.dto.request.OrderStatusRequest;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
     }
 
-    // 특정 유저의 특정 주문 조회 (/users/{userId}/orders/{orderId})
+    // 특정 유저의 특정 주문 조회
     @GetMapping("/users/{userId}/orders/{orderId}")
     public ResponseEntity<Order> getUserOrder(
             @PathVariable Long userId,
@@ -55,6 +56,17 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(order);
+    }
+
+    // 주문 상태 변경
+    // 주문이 “WAITING(대기)” 상태일 때만 주문 상세(수량, 상품 등) 변경이 허용
+    @PatchMapping("/orders/{orderId}")
+    public ResponseEntity<Order> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusRequest request
+    ) {
+        Order updatedOrder = orderService.updateOrderStatus(orderId, request.getStatus());
+        return ResponseEntity.ok(updatedOrder);
     }
 
     // 주문 삭제

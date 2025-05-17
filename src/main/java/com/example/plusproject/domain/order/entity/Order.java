@@ -20,13 +20,19 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public Order(Long userId, String status) {
+    // 상태 변경 전용 생성자
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public Order(Long userId, OrderStatus status) {
         this.userId = userId;
         this.status = status;
     }
