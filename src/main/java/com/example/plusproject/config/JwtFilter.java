@@ -33,6 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtFilter implements Filter {
 
 	private final JwtUtil jwtUtil;
+	private static final List<String> WITHE_LIST=List.of(
+		"/auth",
+		"/search",
+		"/test",
+		"/topkeywords"
+	);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException{Filter.super.init(filterConfig);}
@@ -47,9 +53,11 @@ public class JwtFilter implements Filter {
 
 		String url = httpRequest.getRequestURI();
 
-		if(url.startsWith("/auth")){
-			filterChain.doFilter(request,response);
-			return;
+		for (String prefix : WITHE_LIST){
+			if(url.startsWith(prefix)){
+				filterChain.doFilter(request,response);
+				return;
+			}
 		}
 
 		String bearerJwt = httpRequest.getHeader("Authorization");
