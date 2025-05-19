@@ -1,0 +1,24 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "userRole": "USER",
+  "email": "user1@example.com",
+  "password": "test12!",
+  "nickName": "user1"
+}
+
+
+### 로그인
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "test12!"
+}
