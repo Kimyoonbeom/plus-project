@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,12 +46,14 @@ public class Coupon extends BaseEntity {
 	private int couponQuantityIssued;
 
 	@Column(nullable = false)
-	private boolean status = true;
+	private boolean status = false;
 
 	private LocalDateTime deletedAt;
 
-	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice,
-		int maxDiscountPrice, LocalDateTime couponStartDay, LocalDateTime couponEndDay, int couponQuantityIssued){
+	@Builder
+	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice, int maxDiscountPrice,
+		LocalDateTime couponStartDay, LocalDateTime couponEndDay, int couponQuantityIssued,
+		LocalDateTime deletedAt) {
 		this.name = name;
 		this.discountType = discountType;
 		this.discountPrice = discountPrice;
@@ -59,6 +62,6 @@ public class Coupon extends BaseEntity {
 		this.couponStartDay = couponStartDay;
 		this.couponEndDay = couponEndDay;
 		this.couponQuantityIssued = couponQuantityIssued;
+		this.deletedAt = deletedAt;
 	}
-
 }
