@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+
 public class PlusProjectApplication {
-
     public static void main(String[] args) {
-        SpringApplication.run(PlusProjectApplication.class, args);
+        SpringApplication.run(PlusProjectApplication.class, args); // 이 줄이 실행되어야 함
     }
-
 }

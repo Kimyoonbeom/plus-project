@@ -20,10 +20,12 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf->csrf.disable())
+			.formLogin(login->login.disable())
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/signup", "/auth/login").permitAll()
+				.requestMatchers("/auth/signup", "/auth/login", "/search","/search/**","/topkeywords").permitAll()
 				.anyRequest().authenticated()
-			).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+			)
+			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }

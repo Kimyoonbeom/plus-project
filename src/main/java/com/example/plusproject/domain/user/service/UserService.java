@@ -38,10 +38,6 @@ public class UserService {
 		);
 
 		userRepository.save(newUser);
-		// User savedUser = userRepository.save(newUser);
-
-		// String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), userRole,
-		// 	savedUser.getNickname());
 
 		return "회원가입 완료";
 	}
