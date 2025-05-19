@@ -12,5 +12,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 		return findById(reviewId).orElseThrow(() -> new RuntimeException("찾는 리뷰가 없습니다"));
 	}
 
-	List<Review> findAllByBook_Id(Long bookId);
+	List<Review> findAllByBook_IdAndStatus(Long bookId, boolean status);
+
 }

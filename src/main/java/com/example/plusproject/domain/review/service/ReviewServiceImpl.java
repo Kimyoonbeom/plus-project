@@ -59,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService{
 	@Override
 	public List<ReviewResponseDto> findAll(Long bookId) {
 
-		List<Review> findAllReviewByBookId = reviewRepository.findAllByBook_Id(bookId);
+		List<Review> findAllReviewByBookId = reviewRepository.findAllByBook_IdAndStatus(bookId, false);
 
 		return findAllReviewByBookId.stream().map(ReviewResponseDto::fromReview).toList();
 	}
