@@ -3,6 +3,7 @@ package com.example.plusproject.domain.coupon.entity;
 import java.time.LocalDateTime;
 
 import com.example.plusproject.common.entity.BaseEntity;
+import com.example.plusproject.domain.coupon.enums.DiscountType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +26,7 @@ public class Coupon extends BaseEntity {
 	private String name;
 
 	@Column(nullable = false)
-	private String discountType;
+	private DiscountType discountType;
 
 	@Column(nullable = false)
 	private int discountPrice;
@@ -47,5 +48,17 @@ public class Coupon extends BaseEntity {
 	private boolean status = true;
 
 	private LocalDateTime deletedAt;
+
+	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice,
+		int maxDiscountPrice, LocalDateTime couponStartDay, LocalDateTime couponEndDay, int couponQuantityIssued){
+		this.name = name;
+		this.discountType = discountType;
+		this.discountPrice = discountPrice;
+		this.minOrderPrice = minOrderPrice;
+		this.maxDiscountPrice = maxDiscountPrice;
+		this.couponStartDay = couponStartDay;
+		this.couponEndDay = couponEndDay;
+		this.couponQuantityIssued = couponQuantityIssued;
+	}
 
 }
