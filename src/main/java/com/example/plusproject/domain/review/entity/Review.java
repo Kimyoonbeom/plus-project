@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "review")
+@Table(name = "reviews")
 public class Review extends BaseEntity {
 
 	@Id
