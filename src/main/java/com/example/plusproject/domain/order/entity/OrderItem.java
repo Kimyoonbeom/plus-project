@@ -1,12 +1,12 @@
 package com.example.plusproject.domain.order.entity;
 
+import com.example.plusproject.domain.book.entity.Book;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "order_item")
@@ -16,11 +16,12 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @Column(nullable = false)
-    private Long bookId;
 
     @Column(nullable = false)
     private int quantity;
@@ -28,10 +29,22 @@ public class OrderItem {
     @Column(nullable = false)
     private long price;
 
-    public OrderItem(Long bookId, int quantity, long price) {
-        this.bookId = bookId;
+    @Builder
+    public OrderItem(Book book, int quantity, long price) {
+        this.book = book;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+        if (order != null && !order.getOrderItems().contains(this)) {
+            order.getOrderItems().add(this);
+        }
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.plusproject.domain.order.service;
 
+import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.order.dto.request.OrderItemUpdateRequest;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final BookRepository bookRepository;
 
     // 주문 생성
     @Transactional
@@ -35,27 +37,16 @@ public class OrderService {
         return orderRepository.findByUserId(userId);
     }
 
-    // 주문 상태만 바꾸고 싶을 때
-    @Transactional
-    public Order updateOrderStatus(Long orderId, OrderStatus status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
-        order.changeStatus(status);
-
-        return orderRepository.save(order);
-    }
-
+    // 주문 상태 + 주문상세(수량 등)의 수정.
     @Transactional
     public Order updateOrderAndItems(Long orderId, OrderStatus status, List<OrderItemUpdateRequest> itemRequests) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
-        // 상태 변경
         if (status != null) {
             order.changeStatus(status);
         }
 
-        // 주문상세(수량) 변경
         if (itemRequests != null) {
             for (OrderItemUpdateRequest req : itemRequests) {
                 OrderItem item = order.getOrderItems().stream()
@@ -67,10 +58,8 @@ public class OrderService {
                 }
             }
         }
-
         return order;
     }
-
 
     // 주문 삭제
     @Transactional
