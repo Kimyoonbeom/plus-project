@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 @RequiredArgsConstructor
 public class BookController {
 
@@ -24,9 +24,9 @@ public class BookController {
     }
 
     // 도서 단건 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<BookResponseDto> get(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBook(id));
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookResponseDto> get(@PathVariable Long bookId) {
+        return ResponseEntity.ok(bookService.getBook(bookId));
     }
 
     // 도서 수정

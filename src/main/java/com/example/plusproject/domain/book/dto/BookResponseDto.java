@@ -6,13 +6,14 @@ import lombok.Getter;
 @Getter
 public class BookResponseDto {
 
-    private Long id;
-    private String title;
-    private String author;
-    private String publisher;
-    private String description;
-    private int price;
-    private int stock;
+    private final Long id;
+    private final String title;
+    private final String author;
+    private final String publisher;
+    private final String description;
+    private final int price;
+    private final int stock;
+    private final double rating;
 
     public BookResponseDto(Book book) {
         this.id = book.getId();
@@ -22,5 +23,6 @@ public class BookResponseDto {
         this.description = book.getDescription();
         this.price = book.getPrice();
         this.stock = book.getStock();
+        this.rating = book.getRating();
     }
 }
