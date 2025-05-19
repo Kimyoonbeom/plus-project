@@ -24,13 +24,13 @@ public class OrderItem {
     private Order order;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @Column(nullable = false)
     private long price;
 
     @Builder
-    public OrderItem(Book book, int quantity, long price) {
+    public OrderItem(Book book, Integer quantity, long price) {
         this.book = book;
         this.quantity = quantity;
         this.price = price;
@@ -43,7 +43,7 @@ public class OrderItem {
         }
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }
