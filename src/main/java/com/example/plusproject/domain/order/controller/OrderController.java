@@ -39,7 +39,7 @@ public class OrderController {
     }
 
     // 유저의 주문 전체 조회
-    @GetMapping("/users/{userId}/orders}")
+    @GetMapping("/users/{userId}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
     }

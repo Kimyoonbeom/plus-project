@@ -13,12 +13,7 @@ public class BookRequestDto {
     private String author;
     private String publisher;
     private String description;
-
     private LocalDate publishedAt;
-
     private int price;
     private int stock;
-
-    private String writerName;
-    private String password;
 }
