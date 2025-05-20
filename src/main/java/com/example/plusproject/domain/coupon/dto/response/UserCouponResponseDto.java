@@ -5,19 +5,19 @@ import java.time.LocalDateTime;
 import com.example.plusproject.domain.coupon.enums.DiscountType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserCouponResponseDto {
 
-	private Long userCouponId;
-	private String couponName;
-	private DiscountType discountType;
-	private boolean used;
+	private final Long userCouponId;
+	private final String couponName;
+	private final DiscountType discountType;
+	private final boolean used;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime issuedAt;
+	private final LocalDateTime issuedAt;
 
 }
