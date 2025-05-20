@@ -3,6 +3,7 @@ package com.example.plusproject.domain.coupon.entity;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 
+import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.user.entity.User;
 
 import jakarta.persistence.Entity;
@@ -37,6 +38,10 @@ public class UserCoupon {
 	private LocalDateTime issuedAt;
 
 	private LocalDateTime usedAt;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id")  // 실제 DB 컬럼명에 맞게 조정
+	private Order order;
 
 	public UserCoupon(User user, Coupon coupon) {
 		this.user = user;
