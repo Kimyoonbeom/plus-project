@@ -39,10 +39,6 @@ public class UserCoupon {
 
 	private LocalDateTime usedAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id")  // 실제 DB 컬럼명에 맞게 조정
-	private Order order;
-
 	public UserCoupon(User user, Coupon coupon) {
 		this.user = user;
 		this.coupon = coupon;
