@@ -24,6 +24,7 @@ public class CouponServiceImpl implements CouponService{
 			.discountPrice(dto.getDiscountPrice())
 			.minOrderPrice(dto.getMinOrderPrice())
 			.maxDiscountPrice(dto.getMaxDiscountPrice())
+			.duplicatePossible(dto.isDuplicatePossible())
 			.couponStartDay(dto.getCouponStartDay())
 			.couponEndDay(dto.getCouponEndDay())
 			.couponQuantityIssued(dto.getCouponQuantityIssued())
@@ -38,6 +39,7 @@ public class CouponServiceImpl implements CouponService{
 			save.getDiscountPrice(),
 			save.getMinOrderPrice(),
 			save.getMaxDiscountPrice(),
+			save.isDuplicatePossible(),
 			save.getCouponStartDay(),
 			save.getCouponEndDay(),
 			save.getCouponQuantityIssued(),

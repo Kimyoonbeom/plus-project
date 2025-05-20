@@ -38,6 +38,9 @@ public class Coupon extends BaseEntity {
 	@Column(nullable = false)
 	private int maxDiscountPrice;
 
+	@Column(nullable = false)
+	private boolean duplicatePossible = false;
+
 	private LocalDateTime couponStartDay;
 
 	private LocalDateTime couponEndDay;
@@ -52,13 +55,14 @@ public class Coupon extends BaseEntity {
 
 	@Builder
 	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice, int maxDiscountPrice,
-		LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantityIssued,
+		boolean duplicatePossible, LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantityIssued,
 		LocalDateTime deletedAt) {
 		this.name = name;
 		this.discountType = discountType;
 		this.discountPrice = discountPrice;
 		this.minOrderPrice = minOrderPrice;
 		this.maxDiscountPrice = maxDiscountPrice;
+		this.duplicatePossible = duplicatePossible;
 		this.couponStartDay = couponStartDay;
 		this.couponEndDay = couponEndDay;
 		this.couponQuantityIssued = couponQuantityIssued;

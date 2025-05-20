@@ -22,6 +22,8 @@ public class CreateCouponRequestDto {
 
 	private final int maxDiscountPrice;
 
+	private final boolean duplicatePossible;
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private final LocalDateTime couponStartDay;
 
