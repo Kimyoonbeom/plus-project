@@ -1,9 +1,12 @@
 package com.example.plusproject.domain.order.controller;
 
 import com.example.plusproject.common.dto.AuthUser;
+import com.example.plusproject.domain.book.entity.Book;
+import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.order.dto.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.dto.request.OrderUpdateRequest;
 import com.example.plusproject.domain.order.entity.Order;
+import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final BookRepository bookRepository;
 
     // 주문 생성 (로그인 유저만)
     @PostMapping("/orders")
@@ -24,10 +28,21 @@ public class OrderController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody OrderCreateRequest request
     ) {
+        List<OrderItem> items = request.getItems().stream()
+                .map(itemReq -> {
+                    Book book = bookRepository.findById(itemReq.getBookId())
+                            .orElseThrow(() -> new RuntimeException("책을 찾을 수 없습니다."));
+                    return OrderItem.builder()
+                            .book(book)
+                            .quantity(itemReq.getQuantity())
+                            .price(book.getPrice())
+                            .build();
+                }).toList();
+
         Order order = orderService.createOrder(
                 authUser.getId(),
                 request.getStatus(),
-                request.getItems()
+                items
         );
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
@@ -42,20 +57,6 @@ public class OrderController {
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
-    }
-
-    // 특정 유저의 특정 주문 조회
-    @GetMapping("/users/{userId}/orders/{orderId}")
-    public ResponseEntity<Order> getUserOrder(
-            @PathVariable Long userId,
-            @PathVariable Long orderId
-    ) {
-        // orderId로 주문을 찾고, userId가 일치 하는지 검증
-        Order order = orderService.getOrder(orderId);
-        if (!order.getUserId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        return ResponseEntity.ok(order);
     }
 
     // 주문+주문상세 복합 변경
