@@ -30,7 +30,7 @@ public class CreateCouponResonseDto {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private final LocalDateTime couponEndDay;
 
-	private final int couponQuantityIssued;
+	private final Long couponQuantityIssued;
 
 	private final boolean status;
 

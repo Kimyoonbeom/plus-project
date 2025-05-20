@@ -43,7 +43,7 @@ public class Coupon extends BaseEntity {
 	private LocalDateTime couponEndDay;
 
 	@Column(nullable = false)
-	private int couponQuantityIssued;
+	private Long couponQuantityIssued;
 
 	@Column(nullable = false)
 	private boolean status = false;
@@ -52,7 +52,7 @@ public class Coupon extends BaseEntity {
 
 	@Builder
 	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice, int maxDiscountPrice,
-		LocalDateTime couponStartDay, LocalDateTime couponEndDay, int couponQuantityIssued,
+		LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantityIssued,
 		LocalDateTime deletedAt) {
 		this.name = name;
 		this.discountType = discountType;
