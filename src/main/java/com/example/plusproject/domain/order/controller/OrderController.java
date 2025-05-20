@@ -56,10 +56,17 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
-    // 유저의 주문 전체 조회
+    // 유저의 주문 전체 조회(v1: 캐시 미적용)
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    }
+
+    // 유저별 주문 전체 조회 (v2: 캐시 적용, DTO 반환)
+    @GetMapping("/v2/users/{userId}/orders")
+    public ResponseEntity<List<OrderResponse>> getUserOrdersWithCache(@PathVariable Long userId) {
+        List<OrderResponse> responses = orderService.getOrdersByUserWithCache(userId);
+        return ResponseEntity.ok(responses);
     }
 
     // 주문+주문상세 복합 변경
