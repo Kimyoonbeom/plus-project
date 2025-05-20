@@ -1,8 +1,11 @@
 package com.example.plusproject.domain.coupon.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.plusproject.domain.coupon.dto.request.CreateCouponRequestDto;
+import com.example.plusproject.domain.coupon.dto.response.CouponInfoResponseDto;
 import com.example.plusproject.domain.coupon.dto.response.CreateCouponResonseDto;
 import com.example.plusproject.domain.coupon.entity.Coupon;
 import com.example.plusproject.domain.coupon.repository.CouponRepository;
@@ -46,5 +49,27 @@ public class CouponServiceImpl implements CouponService{
 			save.isStatus(),
 			save.getCreatedAt()
 			);
+	}
+
+	@Override
+	public CouponInfoResponseDto couponInfo(Long couponId) {
+
+		Coupon coupon = couponRepository.findById(couponId)
+			.orElseThrow(()-> new IllegalArgumentException("존재하지 않는 쿠폰입니다."));
+
+		return new CouponInfoResponseDto(
+			coupon.getId(),
+			coupon.getName(),
+			coupon.getDiscountType(),
+			coupon.getDiscountPrice(),
+			coupon.getMinOrderPrice(),
+			coupon.getMaxDiscountPrice(),
+			coupon.isDuplicatePossible(),
+			coupon.getCouponStartDay(),
+			coupon.getCouponEndDay(),
+			coupon.getCouponQuantityIssued(),
+			coupon.isStatus(),
+			coupon.getDeletedAt()
+		);
 	}
 }
