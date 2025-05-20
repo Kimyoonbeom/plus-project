@@ -38,7 +38,7 @@ public class UserCoupon {
 
 	private LocalDateTime usedAt;
 
-	public UserCoupon(User user, Coupon coupon, boolean used, LocalDateTime issuedAt) {
+	public UserCoupon(User user, Coupon coupon) {
 		this.user = user;
 		this.coupon = coupon;
 		this.used = used;
