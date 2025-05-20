@@ -82,4 +82,8 @@ public class Coupon extends BaseEntity {
 		this.couponQuantityIssued = dto.getCouponQuantityIssued();
 	}
 
+	public void deleteCoupon(){
+		this.status = true;
+		this.deletedAt = LocalDateTime.now();
+	}
 }

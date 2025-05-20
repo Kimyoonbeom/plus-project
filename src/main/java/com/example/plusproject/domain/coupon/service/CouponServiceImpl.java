@@ -100,4 +100,14 @@ public class CouponServiceImpl implements CouponService{
 			coupon.getUpdatedAt()
 		);
 	}
+
+	@Transactional
+	@Override
+	public void deleteCoupon(Long couponId) {
+		Coupon coupon = couponRepository.findById(couponId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰입니다."));
+
+		coupon.deleteCoupon();
+
+	}
 }
