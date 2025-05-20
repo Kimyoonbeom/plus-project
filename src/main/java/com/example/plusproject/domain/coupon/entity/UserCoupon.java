@@ -3,7 +3,6 @@ package com.example.plusproject.domain.coupon.entity;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 
-import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.user.entity.User;
 
 import jakarta.persistence.Entity;
