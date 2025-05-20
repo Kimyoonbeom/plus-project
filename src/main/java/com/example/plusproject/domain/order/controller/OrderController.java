@@ -5,6 +5,7 @@ import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.order.dto.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.dto.request.OrderUpdateRequest;
+import com.example.plusproject.domain.order.dto.response.OrderResponse;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.service.OrderService;
@@ -24,7 +25,7 @@ public class OrderController {
 
     // 주문 생성 (로그인 유저만)
     @PostMapping("/orders")
-    public ResponseEntity<Order> createOrder(
+    public ResponseEntity<OrderResponse> createOrder(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody OrderCreateRequest request
     ) {
@@ -44,7 +45,9 @@ public class OrderController {
                 request.getStatus(),
                 items
         );
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        // 엔티티 → DTO 변환
+        OrderResponse response = orderService.toOrderResponse(order);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // 주문 단건 조회

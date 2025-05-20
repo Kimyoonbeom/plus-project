@@ -2,6 +2,7 @@ package com.example.plusproject.domain.order.service;
 
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.order.dto.request.OrderItemUpdateRequest;
+import com.example.plusproject.domain.order.dto.response.OrderResponse;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.entity.OrderStatus;
@@ -65,5 +66,26 @@ public class OrderService {
     @Transactional
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    // 엔티티 → DTO 변환, 무한 반복(순환 참조) 문제 해결.
+    public OrderResponse toOrderResponse(Order order) {
+        List<OrderResponse.OrderItemResponse> itemResponses = order.getOrderItems().stream()
+                .map(item -> OrderResponse.OrderItemResponse.builder()
+                        .id(item.getId())
+                        .bookId(item.getBook().getId())
+                        .bookTitle(item.getBook().getTitle())
+                        .quantity(item.getQuantity())
+                        .price(item.getPrice())
+                        .build()
+                ).toList();
+
+        return OrderResponse.builder()
+                .id(order.getId())
+                .userId(order.getUserId())
+                .status(order.getStatus())
+                .items(itemResponses)
+                .createdAt(order.getCreatedAt())
+                .build();
     }
 }
