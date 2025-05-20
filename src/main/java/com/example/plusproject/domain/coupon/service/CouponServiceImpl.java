@@ -1,12 +1,13 @@
 package com.example.plusproject.domain.coupon.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.plusproject.domain.coupon.dto.request.CreateCouponRequestDto;
+import com.example.plusproject.domain.coupon.dto.request.UpdateCouponRequestDto;
 import com.example.plusproject.domain.coupon.dto.response.CouponInfoResponseDto;
 import com.example.plusproject.domain.coupon.dto.response.CreateCouponResonseDto;
+import com.example.plusproject.domain.coupon.dto.response.UpdateCouponResponseDto;
 import com.example.plusproject.domain.coupon.entity.Coupon;
 import com.example.plusproject.domain.coupon.repository.CouponRepository;
 
@@ -18,6 +19,7 @@ public class CouponServiceImpl implements CouponService{
 
 	private final CouponRepository couponRepository;
 
+	@Transactional
 	@Override
 	public CreateCouponResonseDto createCoupon(CreateCouponRequestDto dto) {
 
@@ -70,6 +72,32 @@ public class CouponServiceImpl implements CouponService{
 			coupon.getCouponQuantityIssued(),
 			coupon.isStatus(),
 			coupon.getDeletedAt()
+		);
+	}
+
+	@Transactional
+	@Override
+	public UpdateCouponResponseDto updateCoupon(Long couponId, UpdateCouponRequestDto dto) {
+
+		Coupon coupon = couponRepository.findById(couponId)
+			.orElseThrow(()->new IllegalArgumentException("존재하지 않는 쿠폰입니다."));
+
+		coupon.updateCoupon(dto);
+
+		return new UpdateCouponResponseDto(
+			coupon.getId(),
+			coupon.getName(),
+			coupon.getDiscountType(),
+			coupon.getDiscountPrice(),
+			coupon.getMinOrderPrice(),
+			coupon.getMaxDiscountPrice(),
+			coupon.isDuplicatePossible(),
+			coupon.getCouponStartDay(),
+			coupon.getCouponEndDay(),
+			coupon.getCouponQuantityIssued(),
+			coupon.isStatus(),
+			coupon.getCreatedAt(),
+			coupon.getUpdatedAt()
 		);
 	}
 }

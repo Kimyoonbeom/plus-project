@@ -3,6 +3,7 @@ package com.example.plusproject.domain.coupon.entity;
 import java.time.LocalDateTime;
 
 import com.example.plusproject.common.entity.BaseEntity;
+import com.example.plusproject.domain.coupon.dto.request.UpdateCouponRequestDto;
 import com.example.plusproject.domain.coupon.enums.DiscountType;
 
 import jakarta.persistence.Column;
@@ -68,4 +69,17 @@ public class Coupon extends BaseEntity {
 		this.couponQuantityIssued = couponQuantityIssued;
 		this.deletedAt = deletedAt;
 	}
+
+	public void updateCoupon(UpdateCouponRequestDto dto){
+		this.name = dto.getName();
+		this.discountType = dto.getDiscountType();
+		this.discountPrice = dto.getDiscountPrice();
+		this.minOrderPrice = dto.getMinOrderPrice();
+		this.maxDiscountPrice = dto.getMaxDiscountPrice();
+		this.duplicatePossible = dto.isDuplicatePossible();
+		this.couponStartDay = dto.getCouponStartDay();
+		this.couponEndDay = dto.getCouponEndDay();
+		this.couponQuantityIssued = dto.getCouponQuantityIssued();
+	}
+
 }
