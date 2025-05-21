@@ -1,0 +1,24 @@
+name: Java CI for feat/book Branch
+
+on:
+  push:
+    branches: [ "feat/book" ]
+  pull_request:
+    branches: [ "feat/book" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 소스코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Gradle 빌드
+        run: ./gradlew clean build --stacktrace
