@@ -6,7 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.example.plusproject.domain.review.dto.response.ReviewResponseDto;
 import com.example.plusproject.domain.review.dto.response.ReviewSearchResponseDto;
+import com.example.plusproject.domain.review.entity.Review;
 import com.example.plusproject.domain.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,10 +24,13 @@ public class ReviewSearchService {
 	 * JPQL은 LIMIT 사용이 불가능 하므로 Pageable 사용해야한다
 	 * @return
 	 */
-	// public Page<ReviewSearchResponseDto> searchReview(Pageable pageable) {
-	//
-	// 	return reviewRepository.findAllOrderByLikeDesc(PageRequest.of(0, 3));
-	// }
+	public Page<ReviewResponseDto> searchReview(Pageable pageable, String content) {
+
+		Page<Review> findAllByContentContainingAndStatus = reviewRepository.findAllByContentContainingAndStatus(
+			content, false, pageable);
+
+		return ReviewRev
+	}
 
 
 }
