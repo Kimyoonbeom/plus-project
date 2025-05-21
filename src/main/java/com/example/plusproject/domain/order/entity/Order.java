@@ -1,6 +1,7 @@
 package com.example.plusproject.domain.order.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
+import com.example.plusproject.domain.coupon.entity.UserCoupon;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

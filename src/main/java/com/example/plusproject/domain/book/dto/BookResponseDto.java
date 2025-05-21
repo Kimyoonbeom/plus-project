@@ -17,6 +17,7 @@ public class BookResponseDto {
     private int stock;
     private double rating;
 
+
     public BookResponseDto(Book book) {
         this.id = book.getId();
         this.title = book.getTitle();
