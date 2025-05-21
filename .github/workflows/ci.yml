@@ -41,7 +41,7 @@ jobs:
         run: |
           for i in {1..30}; do
             echo "Attempt $i: testing MySQL..."
-            echo "SELECT 1" | mysql -h mysql -u root -p"dkzkfld12#" bookstore-db && echo "MySQL is ready!" && exit 0
+            echo "SELECT 1" | mysql -h 127.0.0.1 -P 3306 -u root -p"dkzkfld12#" bookstore-db && echo "MySQL is ready!" && exit 0
             sleep 2
           done
           echo "MySQL did not start in time." && exit 1
