@@ -34,14 +34,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: MySQL 완전 준비될 때까지 대기
+      - name: MySQL 클라이언트 설치
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: MySQL 연결 확인 (실제 연결 시도)
         run: |
-          echo "Waiting for MySQL to be ready with mysqladmin ping..."
           for i in {1..30}; do
-            mysqladmin ping -h mysql -u root -p"dkzkfld12#" --silent && echo "MySQL is ready!" && break
-            echo "Still waiting for MySQL..."
+            echo "Attempt $i: testing MySQL..."
+            echo "SELECT 1" | mysql -h mysql -u root -p"dkzkfld12#" bookstore-db && echo "MySQL is ready!" && exit 0
             sleep 2
           done
+          echo "MySQL did not start in time." && exit 1
 
       - name: gradlew 실행 권한 부여
         run: chmod +x ./gradlew
