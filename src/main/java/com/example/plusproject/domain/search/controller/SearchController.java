@@ -30,7 +30,7 @@ public class SearchController {
 
 	private final SearchService searchService;
 
-	@PostMapping("/search") // 일반 검색과 페이징, 캐시 사용 안함
+	@PostMapping("/search/v1") // 일반 검색과 페이징, 캐시 사용 안함
 	public ResponseEntity<Page<BookResponseDto>> search1(
 		@AuthenticationPrincipal AuthUser authUser,
 		@RequestParam(defaultValue = "1") Integer page,
@@ -43,8 +43,45 @@ public class SearchController {
 		String userId = resolveUserId(authUser,request,response);
 		System.out.println("🔥 guestId = " + userId);
 		keyword = keyword.trim().toLowerCase();
+		System.out.println("🔥 keyword = " + keyword);
 		searchService.saveSearchLog(userId,keyword);
-		return ResponseEntity.ok(searchService.search1(userId, keyword, page, size));
+		return ResponseEntity.ok(searchService.search1(keyword, page, size));
+	}
+
+	@PostMapping("/search/v2") // 일반 검색과 페이징, 캐시 사용 안함
+	public ResponseEntity<Page<BookResponseDto>> search2(
+		@AuthenticationPrincipal AuthUser authUser,
+		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "10") Integer size,
+		@RequestParam(required = false) String keyword,
+		HttpServletRequest request,
+		HttpServletResponse response
+	){
+		System.out.println("🔥 authUser null 여부 확인 " + authUser);
+		String userId = resolveUserId(authUser,request,response);
+		System.out.println("🔥 guestId = " + userId);
+		keyword = keyword.trim().toLowerCase();
+		System.out.println("🔥 keyword = " + keyword);
+		searchService.saveSearchLog(userId,keyword);
+		return ResponseEntity.ok(searchService.search2(keyword, page, size));
+	}
+
+	@PostMapping("/search/v3") // 일반 검색과 페이징, 캐시 사용 안함
+	public ResponseEntity<Page<BookResponseDto>> search3(
+		@AuthenticationPrincipal AuthUser authUser,
+		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "10") Integer size,
+		@RequestParam(required = false) String keyword,
+		HttpServletRequest request,
+		HttpServletResponse response
+	){
+		System.out.println("🔥 authUser null 여부 확인 " + authUser);
+		String userId = resolveUserId(authUser,request,response);
+		System.out.println("🔥 guestId = " + userId);
+		keyword = keyword.trim().toLowerCase();
+		System.out.println("🔥 keyword = " + keyword);
+		searchService.saveSearchLog(userId,keyword);
+		return ResponseEntity.ok(searchService.search3(keyword, page, size).toPage());
 	}
 
 	@GetMapping("/topkeywords/db")

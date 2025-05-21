@@ -36,10 +36,16 @@ Content-Type: application/json
 }
 
 ### 기본 검색, 페이징 호출
-POST http://localhost:8080/search?page=1&size=10&keyword=운동
+POST http://localhost:8080/search/v1?page=1&size=10&keyword=운동
+
+### 캐시(로컬) 검색, 페이징 호출
+POST http://localhost:8080/search/v2?page=1&size=10&keyword=자바
+
+### 캐시(레디스) 검색, 페이징 호출
+POST http://localhost:8080/search/v3?page=1&size=10&keyword=한강
 
 ### 기본 검색, 페이징 호출
-POST http://localhost:8080/search?page=1&size=10&keyword=java
+POST http://localhost:8080/search1?page=1&size=10&keyword=운동
 Authorization: {{bearerToken}}
 
 ### 인기 검색어 10위 추출 DB
