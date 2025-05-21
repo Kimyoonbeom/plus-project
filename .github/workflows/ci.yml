@@ -34,12 +34,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: MySQL 준비될 때까지 대기
+      - name: MySQL 완전 준비될 때까지 대기
         run: |
-          echo "Waiting for MySQL to be ready..."
+          echo "Waiting for MySQL to be ready with mysqladmin ping..."
           for i in {1..30}; do
-            nc -z mysql 3306 && echo "MySQL is up!" && break
-            echo "Waiting for MySQL..."
+            mysqladmin ping -h mysql -u root -p"dkzkfld12#" --silent && echo "MySQL is ready!" && break
+            echo "Still waiting for MySQL..."
             sleep 2
           done
 
