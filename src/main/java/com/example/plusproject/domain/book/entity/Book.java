@@ -1,5 +1,6 @@
 package com.example.plusproject.domain.book.entity;
 
+import com.example.plusproject.domain.book.dto.AladinItemResponse;
 import com.example.plusproject.domain.book.dto.BookRequestDto;
 import com.example.plusproject.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -44,4 +45,5 @@ public class Book extends BaseEntity {
     public void updateRating(double averageRating) {
         this.rating = averageRating;
     }
+
 }

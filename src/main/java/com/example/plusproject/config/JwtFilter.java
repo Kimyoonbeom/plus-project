@@ -36,8 +36,8 @@ public class JwtFilter implements Filter {
 	private static final List<String> WITHE_LIST=List.of(
 		"/auth",
 		"/search",
-		"/test",
-		"/topkeywords"
+		"/topkeywords",
+		"/books/savebookfromaladin"
 	);
 
 	@Override
@@ -52,18 +52,18 @@ public class JwtFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		String url = httpRequest.getRequestURI();
-
-		for (String prefix : WITHE_LIST){
-			if(url.startsWith(prefix)){
-				filterChain.doFilter(request,response);
-				return;
-			}
-		}
-
+		System.out.println("💥 요청 URL: " + url);
+		boolean isWitheList = WITHE_LIST.stream().anyMatch(url::startsWith);
+		System.out.println("✅ isWhiteList: " + isWitheList);
 		String bearerJwt = httpRequest.getHeader("Authorization");
+		System.out.println("🔥 토큰값 전달 확인 " + bearerJwt);
 
-		if(bearerJwt == null){
-			httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"토큰이 필요합니다.");
+		if(isWitheList && bearerJwt == null){
+			filterChain.doFilter(request,response);
+			return;
+		}
+		if(!isWitheList && bearerJwt == null){
+			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 필요합니다.");
 			return;
 		}
 
@@ -85,6 +85,7 @@ public class JwtFilter implements Filter {
 				userRole,
 				(String)claims.get("nickName")
 			);
+
 
 			SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+userRoleStr);
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(

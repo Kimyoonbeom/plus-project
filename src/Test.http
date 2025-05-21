@@ -1,0 +1,95 @@
+@bearerToken = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ1c2VyMUBleGFtcGxlLmNvbSIsInVzZXJSb2xlIjoiVVNFUiIsIm5pY2tOYW1lIjoidXNlcjEiLCJleHAiOjE3NDc3NDQ0MDksImlhdCI6MTc0Nzc0MDgwOX0.U3Sx2PRfaacgVfx7FoK4l2Lw-Z1Kk6s6QAljzJxKpLs
+
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "userRole": "USER",
+  "email": "user3@example.com",
+  "password": "test12!",
+  "nickName": "user3"
+}
+
+### 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "비밀번호1",
+  "userRole": "ADMIN",
+  "nickName": "이기름"
+}
+
+### 로그인
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "test12!"
+}
+
+### 기본 저장 검색, 페이징 호출
+POST http://localhost:8080/search/v1?page=1&size=10&keyword=자바
+
+### 인메모리 캐시 저장 검색, 게스트 유저
+POST http://localhost:8080/search/v2?page=1&size=10&keyword=한강
+
+### 인메모리 캐시 저장 검색, 로그인 후
+POST http://localhost:8080/search/v1?page=1&size=10&keyword=java
+Authorization: {{bearerToken}}
+
+### 레디스 캐시 저장 검색
+POST http://localhost:8080/search/v3?page=1&size=10&keyword=경제
+
+### 인기 검색어 10위 추출 DB
+GET http://localhost:8080/topkeywords/db
+
+### 인기 검색어 10위 추출 LocalCache
+GET http://localhost:8080/topkeywords/localcache
+
+### 인기 검색어 10위 추출 Redis
+GET http://localhost:8080/topkeywords/redis
+
+### 책 등록
+POST http://localhost:8080/books
+Content-Type: application/json
+Authorization: {{bearerToken}}
+
+{
+  "title": "Java의 정석",
+  "author": "남궁성",
+  "publisher": "도우",
+  "description": "자바의 기초부터 객제지향개념을 넘어 실전활용까지 수록한『Java의 정석』. 저자의 오랜 실무경험과 강의한 내용으로 구성되어 자바를 처음 배우는 초보자들의 궁금한 점을 빠짐없이 담고 있다. 더불어 기존의 경력자들을 위해 자바 최신기능인 람다와 스트림과 그 밖의 자바의 최신버젼 JAVA8의 새로운 기능까지 자세하게 설명하고 있다.",
+  "publishedAt": "2016-01-27",
+  "price": 27000,
+  "writerName": "User1",
+  "password": "test12!",
+  "stock": 5
+}
+
+### 책 등록
+POST http://localhost:8080/books
+Content-Type: application/json
+Authorization: {{bearerToken}}
+
+{
+  "title": "이것이 자바다",
+  "author": "신용권",
+  "publisher": "한빛미디어",
+  "description": "기초부터 활용까지 한 권으로 끝내는 자바의 바이블!",
+  "publishedAt": "2024-04-01",
+  "price": 34200,
+  "writerName": "User1",
+  "password": "test12!",
+  "stock": 5
+}
+
+### 책 등록 (알라딘 오픈 API)
+POST http://localhost:8080/books/savebookfromaladin
