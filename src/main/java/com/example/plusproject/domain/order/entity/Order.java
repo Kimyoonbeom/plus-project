@@ -29,8 +29,8 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<UserCoupon> userCoupons = new ArrayList<>();
+    // @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    // private List<UserCoupon> userCoupons = new ArrayList<>();
 
     @Builder
     public Order(Long userId, OrderStatus status) {
