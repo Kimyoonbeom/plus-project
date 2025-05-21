@@ -30,7 +30,7 @@ public class SearchController {
 
 	private final SearchService searchService;
 
-	@PostMapping("/search/v1") // 일반 검색과 페이징, 캐시 사용 안함
+	@PostMapping("/search") // 일반 검색과 페이징, 캐시 사용 안함
 	public ResponseEntity<Page<BookResponseDto>> search1(
 		@AuthenticationPrincipal AuthUser authUser,
 		@RequestParam(defaultValue = "1") Integer page,
@@ -45,38 +45,6 @@ public class SearchController {
 		keyword = keyword.trim().toLowerCase();
 		searchService.saveSearchLog(userId,keyword);
 		return ResponseEntity.ok(searchService.search1(userId, keyword, page, size));
-	}
-
-	@PostMapping("/search/v2") // 인메모리 캐시
-	public ResponseEntity<Page<BookResponseDto>> search2(
-		@AuthenticationPrincipal AuthUser authUser,
-		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(defaultValue = "10") Integer size,
-		@RequestParam(required = false) String keyword,
-		HttpServletRequest request,
-		HttpServletResponse response
-	){
-		System.out.println("🔥 authUser null 여부 확인 " + authUser);
-		String userId = resolveUserId(authUser,request,response);
-		System.out.println("🔥 guestId = " + userId);
-		searchService.saveSearchLog(userId,keyword);
-		return ResponseEntity.ok(searchService.search2(userId, keyword, page, size));
-	}
-
-	@PostMapping("/search/v3") // 레디스 캐시
-	public ResponseEntity<Page<BookResponseDto>> search3(
-		@AuthenticationPrincipal AuthUser authUser,
-		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(defaultValue = "10") Integer size,
-		@RequestParam(required = false) String keyword,
-		HttpServletRequest request,
-		HttpServletResponse response
-	){
-		System.out.println("🧠 레디스 검색 컨트롤러 호출 진입 🧠");
-		String userId = resolveUserId(authUser,request,response);
-		System.out.println("🔥 guestId = " + userId);
-		searchService.saveSearchLog(userId,keyword);
-		return ResponseEntity.ok(searchService.search3(userId, keyword, page, size).toPage());
 	}
 
 	@GetMapping("/topkeywords/db")

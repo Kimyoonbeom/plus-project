@@ -22,7 +22,7 @@ public class SecurityConfig {
 			.csrf(csrf->csrf.disable())
 			.formLogin(login->login.disable())
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/signup", "/auth/login", "/search","/search/**","/topkeywords/**","/books/savebookfromaladin").permitAll()
+				.requestMatchers("/auth/signup", "/auth/login", "/search","/topkeywords/**","/books/savebookfromaladin").permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

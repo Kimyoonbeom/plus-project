@@ -35,18 +35,12 @@ Content-Type: application/json
   "password": "test12!"
 }
 
-### 기본 저장 검색, 페이징 호출
-POST http://localhost:8080/search/v1?page=1&size=10&keyword=자바
+### 기본 검색, 페이징 호출
+POST http://localhost:8080/search?page=1&size=10&keyword=운동
 
-### 인메모리 캐시 저장 검색, 게스트 유저
-POST http://localhost:8080/search/v2?page=1&size=10&keyword=한강
-
-### 인메모리 캐시 저장 검색, 로그인 후
-POST http://localhost:8080/search/v1?page=1&size=10&keyword=java
+### 기본 검색, 페이징 호출
+POST http://localhost:8080/search?page=1&size=10&keyword=java
 Authorization: {{bearerToken}}
-
-### 레디스 캐시 저장 검색
-POST http://localhost:8080/search/v3?page=1&size=10&keyword=경제
 
 ### 인기 검색어 10위 추출 DB
 GET http://localhost:8080/topkeywords/db
