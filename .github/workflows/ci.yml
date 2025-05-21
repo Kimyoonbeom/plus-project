@@ -15,17 +15,17 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_DATABASE: bookstore-db
-          MYSQL_ROOT_PASSWORD: dkzkfld12#
+          MYSQL_ROOT_PASSWORD: "dkzkfld12#"
         ports:
           - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=10
 
     steps:
-      - name: 소스코드 체크아웃
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: JDK 17 설치
@@ -33,6 +33,15 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: DB 커넥션 확인
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          for i in {1..20}; do
+            nc -z mysql 3306 && echo "MySQL is up!" && break
+            echo "Waiting..."
+            sleep 3
+          done
 
       - name: gradlew 실행 권한 부여
         run: chmod +x ./gradlew
