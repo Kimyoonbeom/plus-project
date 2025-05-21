@@ -2,23 +2,20 @@ package com.example.plusproject.domain.book.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class BookRequestDto {
 
     private String title;
     private String author;
     private String publisher;
     private String description;
-
     private LocalDate publishedAt;
-
     private int price;
     private int stock;
-
-    private String writerName;
-    private String password;
 }

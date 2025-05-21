@@ -13,7 +13,7 @@ public class BookResponseDto {
     private final String description;
     private final int price;
     private final int stock;
-    private final double rating;
+    private final Double rating;
 
     public BookResponseDto(Book book) {
         this.id = book.getId();
