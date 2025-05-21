@@ -34,13 +34,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: DB 커넥션 확인
+      - name: MySQL 준비될 때까지 대기
         run: |
           echo "Waiting for MySQL to be ready..."
-          for i in {1..20}; do
+          for i in {1..30}; do
             nc -z mysql 3306 && echo "MySQL is up!" && break
-            echo "Waiting..."
-            sleep 3
+            echo "Waiting for MySQL..."
+            sleep 2
           done
 
       - name: gradlew 실행 권한 부여
