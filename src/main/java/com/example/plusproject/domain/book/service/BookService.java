@@ -5,8 +5,13 @@ import com.example.plusproject.domain.book.dto.BookResponseDto;
 import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.user.entity.User;
+import com.example.plusproject.domain.user.enums.UserRole;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +33,6 @@ public class BookService {
                 .publishedAt(dto.getPublishedAt())
                 .price(dto.getPrice())
                 .stock(dto.getStock())
-                .user(user)
                 .rating(null)  // 최초에는 null
                 .build();
 
@@ -40,19 +44,31 @@ public class BookService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "bookSearchLocal", allEntries = true, cacheManager = "localCacheManager"),
+        @CacheEvict(value = "bookSearchRedis", allEntries = true, cacheManager = "redisCacheManager"),
+    })
     public void updateBook(Long bookId, BookRequestDto dto, User user) {
         Book book = getBookEntity(bookId);
-        if (!book.getUser().getId().equals(user.getId())) {
+
+        if(!user.getUserRole().equals(UserRole.ADMIN)){
             throw new SecurityException("수정 권한이 없습니다.");
         }
+
         book.update(dto);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "bookSearchLocal", allEntries = true, cacheManager = "localCacheManager"),
+        @CacheEvict(value = "bookSearchRedis", allEntries = true, cacheManager = "redisCacheManager"),
+    })
     public void deleteBook(Long bookId, User user) {
         Book book = getBookEntity(bookId);
-        if (!book.getUser().equals(user)) {
-            throw new SecurityException("삭제 권한이 없습니다.");
+
+        if(!user.getUserRole().equals(UserRole.ADMIN)){
+            throw new SecurityException("수정 권한이 없습니다.");
         }
+
         bookRepository.delete(book);
     }
 
@@ -62,6 +78,7 @@ public class BookService {
                 .map(BookResponseDto::new)
                 .collect(Collectors.toList());
     }
+
 
     private Book getBookEntity(Long id) {
         return bookRepository.findById(id)

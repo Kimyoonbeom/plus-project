@@ -28,6 +28,9 @@ public class AladinItemResponse {
 		@JsonProperty("priceSales")
 		private int price;
 
+		@JsonProperty("cover")
+		private String imageUrl;
+
 		private int stockstatus;
 	}
 }

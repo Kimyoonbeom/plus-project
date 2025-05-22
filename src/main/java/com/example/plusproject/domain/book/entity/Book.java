@@ -12,6 +12,9 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "book", indexes = {
+    @Index(name = "idx_book_title_author", columnList = "title, author")
+})
 public class Book extends BaseEntity {
 
     @Id
@@ -22,12 +25,13 @@ public class Book extends BaseEntity {
     private String author;
     private String publisher;
 
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private LocalDate publishedAt;
     private int price;
     private int stock;
+    private String imageUrl;
 
     @Column
     private Double rating;  // 리뷰가 없으면 null 가능
@@ -44,7 +48,7 @@ public class Book extends BaseEntity {
 
     @Builder
     public Book(String title, String author, String publisher, String description,
-                LocalDate publishedAt, int price, int stock, User user, Double rating) {
+                LocalDate publishedAt, int price, int stock, String imageUrl, Double rating) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -52,7 +56,7 @@ public class Book extends BaseEntity {
         this.publishedAt = publishedAt;
         this.price = price;
         this.stock = stock;
-        this.user = user;
+        this.imageUrl = imageUrl;
         this.rating = rating;
     }
 

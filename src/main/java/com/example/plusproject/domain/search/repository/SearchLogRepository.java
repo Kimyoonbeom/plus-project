@@ -19,7 +19,9 @@ public interface SearchLogRepository extends JpaRepository<SearchLog, Long> {
 	// @Query("SELECT s.keyword AS keyword, COUNT(s) AS cnt FROM SearchLog s GROUP BY s.keyword ORDER BY cnt DESC")
 	// List<String> findTopKeywords(Pageable pageable);
 
-	@Query("SELECT new com.example.plusproject.domain.search.dto.response.KeywordCount(s.keyword, COUNT(s)) " +
-	"FROM SearchLog s GROUP BY s.keyword ORDER BY COUNT(s) DESC")
-	List<KeywordCount> findTopKeywords(Pageable pageable);
+	// @Query("SELECT new com.example.plusproject.domain.search.dto.response.KeywordCount(s.keyword, COUNT(s)) " +
+	// "FROM SearchLog s GROUP BY s.keyword ORDER BY COUNT(s) DESC")
+
+	@Query(value = "SELECT s.keyword keyword, COUNT(*) cnt FROM search_log s GROUP BY s.keyword ORDER BY cnt DESC LIMIT 10",nativeQuery = true)
+	List<KeywordCount> findTopKeywords();
 }
