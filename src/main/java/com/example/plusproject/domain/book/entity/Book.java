@@ -36,6 +36,12 @@ public class Book extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /**
+     * 동시성 제어 -  낙관적 락 방법
+     */
+    @Version
+    private int version;
+
     @Builder
     public Book(String title, String author, String publisher, String description,
                 LocalDate publishedAt, int price, int stock, User user, Double rating) {
@@ -59,5 +65,17 @@ public class Book extends BaseEntity {
 
     public void updateRating(Double rating) {
         this.rating = rating;
+    }
+
+    /**
+     * 재고 감소 로직
+     * 재고가 0이라면 예외처리
+     */
+    public void decreaseStock() {
+        if(stock <= 0) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
+
+        this.stock -= 1;
     }
 }

@@ -67,4 +67,16 @@ public class BookService {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("책이 존재하지 않습니다."));
     }
+
+    /**
+     * 재고 감소 로직
+     * 동시성 제어 - 낙관적 락 방법
+     * @param id
+     */
+    @Transactional
+    public void decreaseStockWithLock(Long id) {
+        Book findbook = bookRepository.findByIdOrElseThrow(id);
+        findbook.decreaseStock();
+        bookRepository.save(findbook);
+    }
 }
