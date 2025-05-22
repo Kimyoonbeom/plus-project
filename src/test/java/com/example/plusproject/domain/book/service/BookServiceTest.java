@@ -6,10 +6,12 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
@@ -31,6 +33,9 @@ class BookServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Mock
+	private NaverBookSearchService naverBookSearchService;
+
 	@BeforeEach
 	void SetUp() {
 		User user = new User(UserRole.valueOf("USER"), "test@example.com", "test12!", "testUser");
@@ -38,8 +43,8 @@ class BookServiceTest {
 
 		Book book = Book.builder()
 			.stock(100)
-			.user(user)
 			.build();
+		ReflectionTestUtils.setField(book, "user", user);
 
 		bookRepository.save(book);
 
