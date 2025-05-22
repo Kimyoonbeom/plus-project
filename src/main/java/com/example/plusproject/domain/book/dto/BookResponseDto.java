@@ -15,6 +15,7 @@ public class BookResponseDto {
     private String description;
     private int price;
     private int stock;
+    private String imageUrl;
     private double rating;
 
 
@@ -29,9 +30,9 @@ public class BookResponseDto {
         this.rating = book.getRating();
     }
 
-    public BookResponseDto(Long id, String title, String author, String publisher, String description, int price,
-        int stock,
-        double rating) {
+    public BookResponseDto(Long id, String title, String author, String publisher,
+        String description, Integer price, Integer stock,
+        String imageUrl, Double rating) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -39,6 +40,7 @@ public class BookResponseDto {
         this.description = description;
         this.price = price;
         this.stock = stock;
+        this.imageUrl = imageUrl;
         this.rating = rating;
     }
 }

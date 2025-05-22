@@ -33,7 +33,6 @@ public class BookService {
                 .publishedAt(dto.getPublishedAt())
                 .price(dto.getPrice())
                 .stock(dto.getStock())
-                .user(user)
                 .rating(null)  // 최초에는 null
                 .build();
 
@@ -45,19 +44,17 @@ public class BookService {
     }
 
     @Transactional
-    // @CacheEvict(value = "bookSearchLocal", allEntries = true, cacheManager = "localCacheManager")
-    // @CacheEvict(value = "bookSearchRedis", allEntries = true, cacheManager = "redisCacheManager")
     @Caching(evict = {
         @CacheEvict(value = "bookSearchLocal", allEntries = true, cacheManager = "localCacheManager"),
         @CacheEvict(value = "bookSearchRedis", allEntries = true, cacheManager = "redisCacheManager"),
     })
     public void updateBook(Long bookId, BookRequestDto dto, User user) {
         Book book = getBookEntity(bookId);
-        // if (!book.getUser().getId().equals(user.getId())) {
+
         if(!user.getUserRole().equals(UserRole.ADMIN)){
             throw new SecurityException("수정 권한이 없습니다.");
         }
-        // }
+
         book.update(dto);
     }
 
@@ -71,9 +68,7 @@ public class BookService {
         if(!user.getUserRole().equals(UserRole.ADMIN)){
             throw new SecurityException("수정 권한이 없습니다.");
         }
-        // if (!book.getUser().equals(user)) {
-        //     throw new SecurityException("삭제 권한이 없습니다.");
-        // }
+
         bookRepository.delete(book);
     }
 
