@@ -47,6 +47,7 @@ public class QueryBookRepositoryImpl implements QueryBookRepository {
 				book.rating))
 			.from(book)
 			.where(builder)
+			.orderBy(book.publishedAt.desc().nullsLast(), book.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();

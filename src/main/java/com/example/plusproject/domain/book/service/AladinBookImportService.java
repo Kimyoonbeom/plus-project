@@ -69,8 +69,8 @@ public class AladinBookImportService {
 			.publishedAt(item.getPublishedAt())
 			.stock(5)
 			.price(item.getPrice())
-			.writerName("USER1")
-			.password("test12!")
+			// .writerName("USER1")
+			// .password("test12!")
 			.rating(0.0)
 			.build();
 	}

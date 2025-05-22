@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 public class BookRequestDto {
 
     private String title;
