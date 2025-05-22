@@ -33,6 +33,8 @@ public class QBook extends EntityPathBase<Book> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath imageUrl = createString("imageUrl");
+
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final DatePath<java.time.LocalDate> publishedAt = createDate("publishedAt", java.time.LocalDate.class);
