@@ -1,6 +1,5 @@
 package com.example.plusproject.domain.order.service;
 
-import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.book.service.BookService;
 import com.example.plusproject.domain.order.dto.request.OrderItemUpdateRequest;
 import com.example.plusproject.domain.order.entity.Order;
