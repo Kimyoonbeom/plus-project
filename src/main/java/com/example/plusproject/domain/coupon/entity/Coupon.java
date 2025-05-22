@@ -86,4 +86,16 @@ public class Coupon extends BaseEntity {
 		this.status = true;
 		this.deletedAt = LocalDateTime.now();
 	}
+
+	/**
+	 * 쿠폰 재고 감소 메서드
+	 */
+	public void decreaseCouponQuantity() {
+		if(couponQuantity <= 0) {
+			throw new RuntimeException("쿠폰 수량이 부족합니다.");
+		}
+
+		this.couponQuantity -= 1;
+	}
+
 }
