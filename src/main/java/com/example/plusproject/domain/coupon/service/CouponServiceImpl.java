@@ -32,7 +32,7 @@ public class CouponServiceImpl implements CouponService{
 			.duplicatePossible(dto.isDuplicatePossible())
 			.couponStartDay(dto.getCouponStartDay())
 			.couponEndDay(dto.getCouponEndDay())
-			.couponQuantityIssued(dto.getCouponQuantityIssued())
+			.couponQuantity(dto.getCouponQuantity())
 			.build();
 
 		Coupon save = couponRepository.save(coupon);
@@ -47,7 +47,7 @@ public class CouponServiceImpl implements CouponService{
 			save.isDuplicatePossible(),
 			save.getCouponStartDay(),
 			save.getCouponEndDay(),
-			save.getCouponQuantityIssued(),
+			save.getCouponQuantity(),
 			save.isStatus(),
 			save.getCreatedAt()
 			);
@@ -69,7 +69,7 @@ public class CouponServiceImpl implements CouponService{
 			coupon.isDuplicatePossible(),
 			coupon.getCouponStartDay(),
 			coupon.getCouponEndDay(),
-			coupon.getCouponQuantityIssued(),
+			coupon.getCouponQuantity(),
 			coupon.isStatus(),
 			coupon.getDeletedAt()
 		);
@@ -94,7 +94,7 @@ public class CouponServiceImpl implements CouponService{
 			coupon.isDuplicatePossible(),
 			coupon.getCouponStartDay(),
 			coupon.getCouponEndDay(),
-			coupon.getCouponQuantityIssued(),
+			coupon.getCouponQuantity(),
 			coupon.isStatus(),
 			coupon.getCreatedAt(),
 			coupon.getUpdatedAt()

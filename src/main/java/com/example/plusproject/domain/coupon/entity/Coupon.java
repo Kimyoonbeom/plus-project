@@ -47,7 +47,19 @@ public class Coupon extends BaseEntity {
 	private LocalDateTime couponEndDay;
 
 	@Column(nullable = false)
-	private Long couponQuantityIssued;
+	private Long couponQuantity; // 발행된 쿠폰 수량 -> couponQuantity 다 수정
+
+	// coupon ->
+	// id = 1 -> 2000원 할인 쿠폰, 5개(couponQuantity)
+	// id = 2 -> 30% 할인 쿠폰
+
+	// userCoupon ->
+	// id = 1 -> 1번 유저의 2000원 할인 쿠폰
+	// id = 2 -> 2번 유저의 2000원 할인 쿠폰
+	// id = 3 -> 2번 유저의 2000원 할인 쿠폰
+	// id = 4 -> 2번 유저의 2000원 할인 쿠폰
+	// id = 5 -> 2번 유저의 2000원 할인 쿠폰
+	// id = 6 -> 1번 유저의 30% 할인 쿠폰
 
 	@Column(nullable = false)
 	private boolean status = false;
@@ -56,7 +68,7 @@ public class Coupon extends BaseEntity {
 
 	@Builder
 	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice, int maxDiscountPrice,
-		boolean duplicatePossible, LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantityIssued,
+		boolean duplicatePossible, LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantity,
 		LocalDateTime deletedAt) {
 		this.name = name;
 		this.discountType = discountType;
@@ -66,7 +78,7 @@ public class Coupon extends BaseEntity {
 		this.duplicatePossible = duplicatePossible;
 		this.couponStartDay = couponStartDay;
 		this.couponEndDay = couponEndDay;
-		this.couponQuantityIssued = couponQuantityIssued;
+		this.couponQuantity = couponQuantity;
 		this.deletedAt = deletedAt;
 	}
 
@@ -79,7 +91,7 @@ public class Coupon extends BaseEntity {
 		this.duplicatePossible = dto.isDuplicatePossible();
 		this.couponStartDay = dto.getCouponStartDay();
 		this.couponEndDay = dto.getCouponEndDay();
-		this.couponQuantityIssued = dto.getCouponQuantityIssued();
+		this.couponQuantity = dto.getCouponQuantity();
 	}
 
 	public void deleteCoupon(){

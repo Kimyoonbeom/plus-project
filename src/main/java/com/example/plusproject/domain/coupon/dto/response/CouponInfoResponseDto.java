@@ -32,7 +32,7 @@ public class CouponInfoResponseDto {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private final LocalDateTime couponEndDay;
 
-	private final Long couponQuantityIssued;
+	private final Long couponQuantity;
 
 	private final boolean status;
 
