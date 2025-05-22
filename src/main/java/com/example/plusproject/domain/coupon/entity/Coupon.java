@@ -47,19 +47,7 @@ public class Coupon extends BaseEntity {
 	private LocalDateTime couponEndDay;
 
 	@Column(nullable = false)
-	private Long couponQuantity; // 발행된 쿠폰 수량 -> couponQuantity 다 수정
-
-	// coupon ->
-	// id = 1 -> 2000원 할인 쿠폰, 5개(couponQuantity)
-	// id = 2 -> 30% 할인 쿠폰
-
-	// userCoupon ->
-	// id = 1 -> 1번 유저의 2000원 할인 쿠폰
-	// id = 2 -> 2번 유저의 2000원 할인 쿠폰
-	// id = 3 -> 2번 유저의 2000원 할인 쿠폰
-	// id = 4 -> 2번 유저의 2000원 할인 쿠폰
-	// id = 5 -> 2번 유저의 2000원 할인 쿠폰
-	// id = 6 -> 1번 유저의 30% 할인 쿠폰
+	private Long couponQuantity;
 
 	@Column(nullable = false)
 	private boolean status = false;
