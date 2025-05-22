@@ -1,4 +1,4 @@
-name: Java CI for feat/book Branch
+name: Java CI/CD for feat/book Branch
 
 on:
   push:
@@ -46,9 +46,22 @@ jobs:
           done
           echo "MySQL did not start in time." && exit 1
 
-
       - name: gradlew 실행 권한 부여
         run: chmod +x ./gradlew
 
       - name: Gradle 빌드
         run: ./gradlew clean build --stacktrace
+
+      - name: EC2 접속 후 배포
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd plus-project || git clone https://github.com/Kimyoonbeom/plus-project.git
+            cd plus-project
+            git pull origin feat/book
+            ./gradlew clean build -x test
+            docker-compose down
+            docker-compose up -d --build
