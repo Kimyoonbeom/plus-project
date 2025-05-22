@@ -74,7 +74,7 @@ public class BookService {
      * @param id
      */
     @Transactional
-    public void decreaseStockWithLock(Long id) {
+    public void decreaseStockWithOptimisticLock(Long id) {
         Book findbook = bookRepository.findByIdOrElseThrow(id);
         findbook.decreaseStock();
         bookRepository.save(findbook);

@@ -58,14 +58,14 @@ class BookServiceTest {
 		// 여기서 0은 초기 값을 의미하고 73번 째 줄에 incrementAndGet 메서드로 1씩 증가시키며 카운트 하는 것!
 		AtomicInteger optimisticLockFailures = new AtomicInteger(0);
 
-		// 0부터 99까지 총 100개의 쓰레드가 동시에 decreaseStockWithLock(1L) 을 호출하는 과정
+		// 0부터 99까지 총 100개의 쓰레드가 동시에 decreaseStockWithOptimisticLock(1L) 을 호출하는 과정
 		// .range(0, 100) : 0부터 99까지 총 100개의 숫자를 만드는 과정
 		// .parallel() : 이 숫자들을 쓰레드에 분산하는 과정
 		// .forEach() : 각각의 쓰레드가 1개씩 메서드를 호출!
 		// 따라서 여러 쓰레드에서 병렬로 메서드가 호출되며 동시성 이슈가 발생한다
 		IntStream.range(0, 100).parallel().forEach(i -> {
 			try {
-				bookService.decreaseStockWithLock(1L);
+				bookService.decreaseStockWithOptimisticLock(1L);
 			} catch (RuntimeException e) {
 				System.out.println("💥💥💥💥💥💥낙관적 락으로 인한 데이터 변경 실패!💥💥💥💥💥💥");
 				optimisticLockFailures.incrementAndGet();
@@ -97,7 +97,7 @@ class BookServiceTest {
 
 			while (!updated && attempts < maxRetries) {   // 성공하거나 최대 재시도 횟수를 초과하기 전까지 시도
 				try {
-					bookService.decreaseStockWithLock(1L);
+					bookService.decreaseStockWithOptimisticLock(1L);
 					successfulDecrements.incrementAndGet();
 					updated = true;
 				} catch (RuntimeException e) {
