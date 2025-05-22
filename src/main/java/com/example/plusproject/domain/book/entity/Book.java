@@ -1,5 +1,6 @@
 package com.example.plusproject.domain.book.entity;
 
+import com.example.plusproject.domain.book.dto.AladinItemResponse;
 import com.example.plusproject.domain.book.dto.BookRequestDto;
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.domain.user.entity.User;
@@ -60,4 +61,5 @@ public class Book extends BaseEntity {
     public void updateRating(Double rating) {
         this.rating = rating;
     }
+
 }

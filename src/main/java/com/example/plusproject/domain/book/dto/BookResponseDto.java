@@ -2,18 +2,21 @@ package com.example.plusproject.domain.book.dto;
 
 import com.example.plusproject.domain.book.entity.Book;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class BookResponseDto {
 
-    private final Long id;
-    private final String title;
-    private final String author;
-    private final String publisher;
-    private final String description;
-    private final int price;
-    private final int stock;
-    private final Double rating;
+    private Long id;
+    private String title;
+    private String author;
+    private String publisher;
+    private String description;
+    private int price;
+    private int stock;
+    private double rating;
+
 
     public BookResponseDto(Book book) {
         this.id = book.getId();
@@ -24,5 +27,18 @@ public class BookResponseDto {
         this.price = book.getPrice();
         this.stock = book.getStock();
         this.rating = book.getRating();
+    }
+
+    public BookResponseDto(Long id, String title, String author, String publisher, String description, int price,
+        int stock,
+        double rating) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+        this.rating = rating;
     }
 }
