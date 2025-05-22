@@ -57,7 +57,7 @@ public class OrderService {
                     item.setQuantity(req.getQuantity());
 
                     // 책 재고 감소
-                    bookService.decreaseStockWithLock(item.getBook().getId());
+                    bookService.decreaseStockWithOptimisticLock(item.getBook().getId());
                 }
             }
         }
