@@ -110,4 +110,15 @@ public class CouponServiceImpl implements CouponService{
 		coupon.deleteCoupon();
 
 	}
+
+	/**
+	 * 쿠폰 재고 감소 로직 - 비관적 락 적용
+	 * @param couponId
+	 */
+	@Transactional
+	public void decreaseCouponQuantityWithPessimisticLock(Long couponId) {
+		Coupon findCoupon = couponRepository.findByIdWithPessimisticLockOrElseThrow(couponId);
+		findCoupon.decreaseCouponQuantity();
+		couponRepository.save(findCoupon);
+	}
 }
