@@ -6,6 +6,7 @@ import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.entity.OrderStatus;
 import com.example.plusproject.domain.order.repository.OrderRepository;
+import com.example.plusproject.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,8 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public Order createOrder(Long userId, OrderStatus status, List<OrderItem> items) {
-        Order order = new Order(userId, status);
+    public Order createOrder(User user, OrderStatus status, List<OrderItem> items) {
+        Order order = new Order(user, status);
         order.addOrderItems(items);
         return orderRepository.save(order);
     }

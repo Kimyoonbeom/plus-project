@@ -8,6 +8,9 @@ import com.example.plusproject.domain.order.dto.request.OrderUpdateRequest;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.service.OrderService;
+import com.example.plusproject.domain.user.repository.UserRepository;
+
+import com.example.plusproject.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
     // 주문 생성 (로그인 유저만)
     @PostMapping("/orders")
@@ -28,6 +32,9 @@ public class OrderController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody OrderCreateRequest request
     ) {
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
         List<OrderItem> items = request.getItems().stream()
                 .map(itemReq -> {
                     Book book = bookRepository.findById(itemReq.getBookId())
@@ -40,7 +47,7 @@ public class OrderController {
                 }).toList();
 
         Order order = orderService.createOrder(
-                authUser.getId(),
+                user,
                 request.getStatus(),
                 items
         );

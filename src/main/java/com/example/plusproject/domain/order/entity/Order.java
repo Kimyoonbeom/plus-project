@@ -2,6 +2,7 @@ package com.example.plusproject.domain.order.entity;
 
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.domain.coupon.entity.UserCoupon;
+import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,22 +20,25 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<UserCoupon> userCoupons = new ArrayList<>();
 
     @Builder
-    public Order(Long userId, OrderStatus status) {
-        this.userId = userId;
+    public Order(User user, OrderStatus status) {
+        this.user = user;
         this.status = status;
     }
 
