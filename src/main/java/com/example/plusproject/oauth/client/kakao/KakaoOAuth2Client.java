@@ -7,11 +7,14 @@ import com.example.plusproject.oauth.client.kakao.dto.KakaoLoginUserInfoResponse
 import com.example.plusproject.oauth.client.kakao.dto.KakaoTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -21,9 +24,10 @@ public class KakaoOAuth2Client implements OAuth2Client {
     private final static String AUTH_SERVER_BASE_URL = "https://kauth.kakao.com";
     private final static String RESOURCE_SERVER_BASE_URL = "https://kapi.kakao.com";
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    //
+    @Value("${oauth2.kakao.client_id}")
     private String clientId;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    @Value("${oauth2.kakao.redirect_url}")
     private String redirectUrl;
 
     @Override
@@ -40,19 +44,21 @@ public class KakaoOAuth2Client implements OAuth2Client {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUrl);
         body.add("code", authorizationCode);
+        // body.add("client_secret", clientSecret); // 필요 시
 
-        return restClient.post()
+        Map<String, Object> tokenMap = restClient.post()
                 .uri(AUTH_SERVER_BASE_URL + "/oauth/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (req, resp) -> {
-                    throw new RuntimeException("카카오 AccessToken 조회 실패");
-                })
-                .body(KakaoTokenResponse.class)
-                .getAccessToken();
+                .body(new ParameterizedTypeReference<>() {});
+
+        return (String) tokenMap.get("access_token");
+
     }
+
 
     @Override
     public OAuth2UserInfo retrieveUserInfo(String accessToken) {

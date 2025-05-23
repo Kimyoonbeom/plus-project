@@ -19,19 +19,21 @@ public class OAuth2LoginController {
 
     @GetMapping("/oauth2/login/{provider}")
     public void redirectLoginPage(
-            @PathVariable OAuth2Provider provider,
+            @PathVariable String provider,
             HttpServletResponse response
     ) throws IOException {
-        String loginPageUrl = oAuth2LoginService.generateLoginPageUrl(provider);
+        System.out.println(provider);
+        String loginPageUrl = oAuth2LoginService.generateLoginPageUrl1(provider);
         response.sendRedirect(loginPageUrl);
     }
 
     @GetMapping("/oauth2/callback/{provider}")
     public ResponseEntity<String> oauth2Login(
-            @PathVariable OAuth2Provider provider,
+            @PathVariable String provider,
             @RequestParam("code") String authorizationCode
     ) {
-        String accessToken = oAuth2LoginService.login(provider, authorizationCode);
+        String accessToken = oAuth2LoginService.login1(provider, authorizationCode);
         return ResponseEntity.ok(accessToken);
     }
+
 }
