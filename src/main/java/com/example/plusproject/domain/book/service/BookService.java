@@ -97,13 +97,41 @@ public class BookService {
     /**
      * 재고 감소 로직
      * 동시성 제어 - 낙관적 락 방법
+     * 최대 재시도 횟수 1000번으로 설정
      * @param id
      */
     @Transactional
     public void decreaseStockWithOptimisticLock(Long id) {
+
+        int maxRetries = 1000;  // 최대 재시도 횟수
+        int attempts = 0;   // 시도 횟수
+        boolean updated = false;    // false면 업데이트 실패, true면 업데이트 성공
+
+        while(!updated && attempts < maxRetries) {
+            try {
+                decreaseStock(id);  // 트랜잭션 관리를 위해 메서드 분리
+                updated = true;
+            } catch (RuntimeException e) {
+                attempts++;
+            }
+        }
+
+        if(!updated) {
+            throw new RuntimeException("최대 재시도 횟수만큼 시도하였으나 실패하였습니다");
+        }
+    }
+
+    /**
+     * 재고 감소 로직
+     * 이 부분을 따로 빼주는 이유는 트랜잭션 관리를 위함
+     * @param id
+     */
+    @Transactional
+    public void decreaseStock(Long id) {
         Book findbook = bookRepository.findByIdOrElseThrow(id);
         findbook.decreaseStock();
-        bookRepository.save(findbook);
+        //💥어차피 JPA가 Version 관리를 통해 영속성 컨텍스트 내에 있으므로 굳이 save() 안해줘도 Transactional 종료 시에 자동으로 flush 된다!
+        // bookRepository.save(findbook);
     }
 
     /**
