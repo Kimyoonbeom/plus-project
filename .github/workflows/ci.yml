@@ -49,8 +49,10 @@ jobs:
       - name: gradlew 실행 권한 부여
         run: chmod +x ./gradlew
 
-      - name: Gradle 빌드
+      - name: Gradle 빌드 (테스트 프로파일 적용)
         run: ./gradlew clean build --stacktrace
+        env:
+          SPRING_PROFILES_ACTIVE: test
 
       - name: EC2 접속 후 배포
         uses: appleboy/ssh-action@v1.0.0
