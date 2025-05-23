@@ -1,5 +1,6 @@
 package com.example.plusproject.domain.book.service;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -88,7 +89,7 @@ class BookServiceTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		// 최대 재시도 횟수
-		final int maxRetries = 1000;
+		final int maxRetries = 100;
 
 		// 시도 횟수
 		AtomicInteger totalAttempts = new AtomicInteger(0);
@@ -96,7 +97,9 @@ class BookServiceTest {
 		// 성공 횟수
 		AtomicInteger successfulDecrements = new AtomicInteger(0);
 
-		IntStream.range(0, 100).parallel().forEach(i -> {
+
+		IntStream.range(0, 1000).parallel().forEach(i -> {
+
 			boolean updated = false; // false면 업데이트 실패, true면 업데이트 성공
 			int attempts = 0; // 시도 횟수
 
@@ -105,6 +108,7 @@ class BookServiceTest {
 					bookService.decreaseStockWithOptimisticLock(1L);
 					successfulDecrements.incrementAndGet();
 					updated = true;
+
 				} catch (RuntimeException e) {
 					attempts++;
 				}
@@ -134,10 +138,14 @@ class BookServiceTest {
 	@Test
 	@DisplayName("Redisson 분산 락 방법을 이용한 동시성 제어")
 	void decreaseStockWithRedisson() {
-		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+		System.out.println("🔅🔅🔅🔅🔅🔅Redisson 분산 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
-		IntStream.range(0, 100).parallel().forEach(i -> {
+		IntStream.range(0, 1000).parallel().forEach(i -> {
+			try{
 			bookService.decreaseStockWithRedisson(1L);
+			} catch (RuntimeException e) {
+				System.out.println("🧨 [" + i + "] 재고 부족 예외 발생: " + e.getMessage());
+			}
 		});
 
 		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
