@@ -48,6 +48,7 @@ dependencies {
 
     // 레디스 연동
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.1'
 
     // queryDSL
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'

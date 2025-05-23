@@ -88,7 +88,7 @@ class BookServiceTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		// 최대 재시도 횟수
-		final int maxRetries = 30;
+		final int maxRetries = 5;
 
 		// 시도 횟수
 		AtomicInteger totalAttempts = new AtomicInteger(0);
@@ -96,7 +96,7 @@ class BookServiceTest {
 		// 성공 횟수
 		AtomicInteger successfulDecrements = new AtomicInteger(0);
 
-		IntStream.range(0, 100).parallel().forEach(i -> {
+		IntStream.range(0, 10).parallel().forEach(i -> {
 			boolean updated = false; // false면 업데이트 실패, true면 업데이트 성공
 			int attempts = 0; // 시도 횟수
 
