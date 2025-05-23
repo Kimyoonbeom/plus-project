@@ -131,4 +131,17 @@ class BookServiceTest {
 		// 즉, 접근 실패를 하게 하였으므로 동시성 제어를 성공한 것!
 	}
 
+	@Test
+	@DisplayName("Redisson 분산 락 방법을 이용한 동시성 제어")
+	void decreaseStockWithRedisson() {
+		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		IntStream.range(0, 100).parallel().forEach(i -> {
+			bookService.decreaseStockWithRedisson(1L);
+		});
+
+		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
+		System.out.println("최종 재고" + findBookAgain.getStock()); // 최종 Stock 값 출력
+	}
+
 }
