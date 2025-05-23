@@ -43,7 +43,7 @@ class CouponServiceImplTest {
 	@Test
 	@DisplayName("동시성 이슈 발생")
 	void decreaseCouponQuantity() {
-		System.out.println("🔅🔅🔅🔅🔅🔅메서드 시작🔅🔅🔅🔅🔅🔅");
+		System.out.println("🔅🔅🔅🔅🔅🔅동시성 이슈 발생 메서드 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			Coupon findCoupon = couponRepository.findById(1L).orElseThrow();
@@ -58,7 +58,7 @@ class CouponServiceImplTest {
 	@Test
 	@DisplayName("비관적 락을 이용한 동시성 제어")
 	void decreaseCouponQuantityWithPessimisticLock() {
-		System.out.println("🔅🔅🔅🔅🔅🔅메서드 시작🔅🔅🔅🔅🔅🔅");
+		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			couponServiceImpl.decreaseCouponQuantityWithPessimisticLock(1L);
