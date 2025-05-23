@@ -1,6 +1,5 @@
 package com.example.plusproject.domain.book.entity;
 
-import com.example.plusproject.domain.book.dto.AladinItemResponse;
 import com.example.plusproject.domain.book.dto.BookRequestDto;
 import com.example.plusproject.common.entity.BaseEntity;
 import com.example.plusproject.domain.user.entity.User;
@@ -37,6 +36,16 @@ public class Book extends BaseEntity {
     @Column
     private Double rating;  // 리뷰가 없으면 null 가능
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    /**
+     * 동시성 제어 -  낙관적 락 방법
+     */
+    @Version
+    private int version;
+
     @Builder
     public Book(String title, String author, String publisher, String description,
                 LocalDate publishedAt, int price, int stock, String imageUrl, Double rating) {
@@ -62,4 +71,15 @@ public class Book extends BaseEntity {
         this.rating = rating;
     }
 
+    /**
+     * 재고 감소 로직
+     * 재고가 0이라면 예외처리
+     */
+    public void decreaseStock() {
+        if(stock <= 0) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
+
+        this.stock -= 1;
+    }
 }

@@ -44,7 +44,7 @@ public class UserCouponServiceImpl implements UserCouponService {
 		// 수량제한있으면 수량제한도 체크해야됨 / 중복 불가능만 수량 체크하게 수정
 		if (!coupon.isDuplicatePossible()){
 			long issuedCouponCount = userCouponRepository.countByCoupon_Id(couponId);
-			Long maxCoupon = coupon.getCouponQuantityIssued();
+			Long maxCoupon = coupon.getCouponQuantity();
 			//null 인경우 무제한 발급
 			if (maxCoupon != null){
 				if (maxCoupon == 0 || issuedCouponCount >= maxCoupon){

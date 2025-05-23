@@ -47,7 +47,7 @@ public class Coupon extends BaseEntity {
 	private LocalDateTime couponEndDay;
 
 	@Column(nullable = false)
-	private Long couponQuantityIssued;
+	private Long couponQuantity;
 
 	@Column(nullable = false)
 	private boolean status = false;
@@ -56,7 +56,7 @@ public class Coupon extends BaseEntity {
 
 	@Builder
 	public Coupon(String name, DiscountType discountType, int discountPrice, int minOrderPrice, int maxDiscountPrice,
-		boolean duplicatePossible, LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantityIssued,
+		boolean duplicatePossible, LocalDateTime couponStartDay, LocalDateTime couponEndDay, Long couponQuantity,
 		LocalDateTime deletedAt) {
 		this.name = name;
 		this.discountType = discountType;
@@ -66,7 +66,7 @@ public class Coupon extends BaseEntity {
 		this.duplicatePossible = duplicatePossible;
 		this.couponStartDay = couponStartDay;
 		this.couponEndDay = couponEndDay;
-		this.couponQuantityIssued = couponQuantityIssued;
+		this.couponQuantity = couponQuantity;
 		this.deletedAt = deletedAt;
 	}
 
@@ -79,11 +79,23 @@ public class Coupon extends BaseEntity {
 		this.duplicatePossible = dto.isDuplicatePossible();
 		this.couponStartDay = dto.getCouponStartDay();
 		this.couponEndDay = dto.getCouponEndDay();
-		this.couponQuantityIssued = dto.getCouponQuantityIssued();
+		this.couponQuantity = dto.getCouponQuantity();
 	}
 
 	public void deleteCoupon(){
 		this.status = true;
 		this.deletedAt = LocalDateTime.now();
 	}
+
+	/**
+	 * 쿠폰 재고 감소 메서드
+	 */
+	public void decreaseCouponQuantity() {
+		if(couponQuantity <= 0) {
+			throw new RuntimeException("쿠폰 수량이 부족합니다.");
+		}
+
+		this.couponQuantity -= 1;
+	}
+
 }
