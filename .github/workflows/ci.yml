@@ -60,6 +60,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
+          command_timeout: 1200
           script: |
             cd plus-project || git clone https://github.com/Kimyoonbeom/plus-project.git
             cd plus-project
