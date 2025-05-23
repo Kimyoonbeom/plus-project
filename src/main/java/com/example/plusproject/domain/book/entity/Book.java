@@ -33,9 +33,9 @@ public class Book extends BaseEntity {
     @Column
     private Double rating;  // 리뷰가 없으면 null 가능
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
     @Builder
     public Book(String title, String author, String publisher, String description,
@@ -47,7 +47,7 @@ public class Book extends BaseEntity {
         this.publishedAt = publishedAt;
         this.price = price;
         this.stock = stock;
-        this.user = user;
+//        this.user = user;
         this.rating = rating;
     }
 

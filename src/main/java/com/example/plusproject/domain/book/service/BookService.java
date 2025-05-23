@@ -5,6 +5,7 @@ import com.example.plusproject.domain.book.dto.BookResponseDto;
 import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.user.entity.User;
+import com.example.plusproject.domain.user.enums.UserRole;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class BookService {
     @Transactional
     public void updateBook(Long bookId, BookRequestDto dto, User user) {
         Book book = getBookEntity(bookId);
-        if (!book.getUser().getId().equals(user.getId())) {
+        if (!user.getUserRole().equals(UserRole.ADMIN)) {
             throw new SecurityException("수정 권한이 없습니다.");
         }
         book.update(dto);
@@ -50,7 +51,7 @@ public class BookService {
 
     public void deleteBook(Long bookId, User user) {
         Book book = getBookEntity(bookId);
-        if (!book.getUser().equals(user)) {
+        if (!user.getUserRole().equals(UserRole.ADMIN)) {
             throw new SecurityException("삭제 권한이 없습니다.");
         }
         bookRepository.delete(book);
