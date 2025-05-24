@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 Test.http
 **/src/main/generated/
-
+Docker-compose.yml
 
 ### STS ###
 .apt_generated
