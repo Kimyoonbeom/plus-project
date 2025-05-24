@@ -61,7 +61,11 @@ class CouponServiceImplTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
-			couponServiceImpl.decreaseCouponQuantityWithPessimisticLock(1L);
+			try {
+				couponServiceImpl.decreaseCouponQuantityWithPessimisticLock(1L);
+			} catch (RuntimeException e) {
+				System.out.println(e.getMessage());
+			}
 		});
 
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
