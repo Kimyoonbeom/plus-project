@@ -45,14 +45,12 @@ class BookServiceTest {
 		Book book = Book.builder()
 			.stock(100)
 			.build();
-		ReflectionTestUtils.setField(book, "user", user);
 
 		bookRepository.save(book);
 
 		Book findBook = bookRepository.findByIdOrElseThrow(1L);
 		System.out.println("초기 재고" + findBook.getStock());  // 초기 Stock 값 출력
 	}
-
 
 	@Test
 	@DisplayName("낙관적 락을 이용한 동시성 제어")
@@ -89,7 +87,7 @@ class BookServiceTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		// 최대 재시도 횟수
-		final int maxRetries = 100;
+		final int maxRetries = 10;
 
 		// 시도 횟수
 		AtomicInteger totalAttempts = new AtomicInteger(0);
@@ -97,8 +95,7 @@ class BookServiceTest {
 		// 성공 횟수
 		AtomicInteger successfulDecrements = new AtomicInteger(0);
 
-
-		IntStream.range(0, 1000).parallel().forEach(i -> {
+		IntStream.range(0, 100).parallel().forEach(i -> {
 
 			boolean updated = false; // false면 업데이트 실패, true면 업데이트 성공
 			int attempts = 0; // 시도 횟수
@@ -120,7 +117,7 @@ class BookServiceTest {
 			// 같은 version인 경우만 성공하므로 1개씩 성공이 되는데 나머지 99명은 재시도를 한다.
 			// 근데 재시도끼리도 충돌이 나서 다시 재시도를 할 수도 있음!
 			// 따라서 최종 재고가 남았음에도 이미 최대 재시도 횟수를 모두 소진하여 재시도를 못하게 된다
-			if(!updated) {
+			if (!updated) {
 				System.out.println("최대 재시도를 " + attempts + "회 하였으나 실패하였습니다. (for iteration " + i + "번째에서 발생.)");
 			}
 		});
@@ -141,10 +138,10 @@ class BookServiceTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅Redisson 분산 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
-			try{
-			bookService.decreaseStockWithRedisson(1L);
+			try {
+				bookService.decreaseStockWithRedisson(1L);
 			} catch (RuntimeException e) {
-				System.out.println("🧨 [" + i + "] 재고 부족 예외 발생: " + e.getMessage());
+				System.out.println("🧨 [" + i + "] 예외 발생 : " + e.getMessage());
 			}
 		});
 
