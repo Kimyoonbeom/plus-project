@@ -33,7 +33,7 @@ class CouponServiceImplTest {
 			.discountPrice(100)
 			.minOrderPrice(100)
 			.maxDiscountPrice(100)
-			.couponQuantity(1000L)
+			.couponQuantity(100L)
 			.build();
 
 		couponRepository.save(coupon);
@@ -66,6 +66,23 @@ class CouponServiceImplTest {
 
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
 		System.out.println("최종 재고 : " + findCouponAgain.getCouponQuantity());
+	}
+
+	@Test
+	@DisplayName("Redisson을 이용한 동시성 제어")
+	void decreaseCouponQuantityWithRedisson() {
+		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		IntStream.range(0, 1000).parallel().forEach(i -> {
+			try {
+				couponServiceImpl.decreaseCouponQuantityWithRedisson(1L);
+			} catch (RuntimeException e) {
+				System.out.println("🧨 [" + i + "] 예외 발생 : " + e.getMessage());
+			}
+		});
+
+		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
+		System.out.println("최종 재고" + findCouponAgain.getCouponQuantity());
 	}
 
 }
