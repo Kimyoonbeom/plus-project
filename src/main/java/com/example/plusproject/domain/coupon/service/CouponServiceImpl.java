@@ -1,5 +1,9 @@
 package com.example.plusproject.domain.coupon.service;
 
+import java.util.concurrent.TimeUnit;
+
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 public class CouponServiceImpl implements CouponService{
 
 	private final CouponRepository couponRepository;
+	private final RedissonClient redissonClient;
+
+	private static final String LOCK_KEY = "quantityLock";
 
 	@Transactional
 	@Override
@@ -112,7 +119,7 @@ public class CouponServiceImpl implements CouponService{
 	}
 
 	/**
-	 * 쿠폰 재고 감소 로직 - 비관적 락 적용
+	 * 쿠폰 재고 감소 로직 - 동시성 제어(비관적 락 적용)
 	 * @param couponId
 	 */
 	@Transactional
@@ -120,5 +127,29 @@ public class CouponServiceImpl implements CouponService{
 		Coupon findCoupon = couponRepository.findByIdWithPessimisticLockOrElseThrow(couponId);
 		findCoupon.decreaseCouponQuantity();
 		couponRepository.save(findCoupon);
+	}
+
+	/**
+	 * 쿠폰 재고 감소 로직 - 동시성 제어(Redisson 적용)
+	 * @param couponId
+	 */
+	public void decreaseCouponQuantityWithRedisson(Long couponId) {
+		RLock fairLock = redissonClient.getFairLock(LOCK_KEY);
+
+		try {
+			boolean isLocked = fairLock.tryLock(10, 60, TimeUnit.SECONDS);
+
+			if(isLocked) {
+				Coupon findCoupon = couponRepository.findById(couponId).orElseThrow(() -> new RuntimeException("찾는 쿠폰이 없습니다"));
+				findCoupon.decreaseCouponQuantity();
+				couponRepository.save(findCoupon);
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		} finally {
+			if(fairLock.isHeldByCurrentThread()) {
+				fairLock.unlock();
+			}
+		}
 	}
 }
