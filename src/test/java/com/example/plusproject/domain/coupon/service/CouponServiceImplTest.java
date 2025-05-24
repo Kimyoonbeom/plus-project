@@ -33,7 +33,7 @@ class CouponServiceImplTest {
 			.discountPrice(100)
 			.minOrderPrice(100)
 			.maxDiscountPrice(100)
-			.couponQuantity(1000L)
+			.couponQuantity(100L)
 			.build();
 
 		couponRepository.save(coupon);
@@ -43,7 +43,7 @@ class CouponServiceImplTest {
 	@Test
 	@DisplayName("동시성 이슈 발생")
 	void decreaseCouponQuantity() {
-		System.out.println("🔅🔅🔅🔅🔅🔅메서드 시작🔅🔅🔅🔅🔅🔅");
+		System.out.println("🔅🔅🔅🔅🔅🔅동시성 이슈 발생 메서드 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			Coupon findCoupon = couponRepository.findById(1L).orElseThrow();
@@ -58,14 +58,35 @@ class CouponServiceImplTest {
 	@Test
 	@DisplayName("비관적 락을 이용한 동시성 제어")
 	void decreaseCouponQuantityWithPessimisticLock() {
-		System.out.println("🔅🔅🔅🔅🔅🔅메서드 시작🔅🔅🔅🔅🔅🔅");
+		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
-			couponServiceImpl.decreaseCouponQuantityWithPessimisticLock(1L);
+			try {
+				couponServiceImpl.decreaseCouponQuantityWithPessimisticLock(1L);
+			} catch (RuntimeException e) {
+				System.out.println(e.getMessage());
+			}
 		});
 
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
 		System.out.println("최종 재고 : " + findCouponAgain.getCouponQuantity());
+	}
+
+	@Test
+	@DisplayName("Redisson을 이용한 동시성 제어")
+	void decreaseCouponQuantityWithRedisson() {
+		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		IntStream.range(0, 1000).parallel().forEach(i -> {
+			try {
+				couponServiceImpl.decreaseCouponQuantityWithRedisson(1L);
+			} catch (RuntimeException e) {
+				System.out.println("🧨 [" + i + "] 예외 발생 : " + e.getMessage());
+			}
+		});
+
+		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
+		System.out.println("최종 재고" + findCouponAgain.getCouponQuantity());
 	}
 
 }

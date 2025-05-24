@@ -1,5 +1,6 @@
 package com.example.plusproject.domain.book.service;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -44,14 +45,12 @@ class BookServiceTest {
 		Book book = Book.builder()
 			.stock(100)
 			.build();
-		ReflectionTestUtils.setField(book, "user", user);
 
 		bookRepository.save(book);
 
 		Book findBook = bookRepository.findByIdOrElseThrow(1L);
 		System.out.println("초기 재고" + findBook.getStock());  // 초기 Stock 값 출력
 	}
-
 
 	@Test
 	@DisplayName("낙관적 락을 이용한 동시성 제어")
@@ -88,7 +87,7 @@ class BookServiceTest {
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
 
 		// 최대 재시도 횟수
-		final int maxRetries = 30;
+		final int maxRetries = 10;
 
 		// 시도 횟수
 		AtomicInteger totalAttempts = new AtomicInteger(0);
@@ -97,6 +96,7 @@ class BookServiceTest {
 		AtomicInteger successfulDecrements = new AtomicInteger(0);
 
 		IntStream.range(0, 100).parallel().forEach(i -> {
+
 			boolean updated = false; // false면 업데이트 실패, true면 업데이트 성공
 			int attempts = 0; // 시도 횟수
 
@@ -105,6 +105,7 @@ class BookServiceTest {
 					bookService.decreaseStockWithOptimisticLock(1L);
 					successfulDecrements.incrementAndGet();
 					updated = true;
+
 				} catch (RuntimeException e) {
 					attempts++;
 				}
@@ -116,7 +117,7 @@ class BookServiceTest {
 			// 같은 version인 경우만 성공하므로 1개씩 성공이 되는데 나머지 99명은 재시도를 한다.
 			// 근데 재시도끼리도 충돌이 나서 다시 재시도를 할 수도 있음!
 			// 따라서 최종 재고가 남았음에도 이미 최대 재시도 횟수를 모두 소진하여 재시도를 못하게 된다
-			if(!updated) {
+			if (!updated) {
 				System.out.println("최대 재시도를 " + attempts + "회 하였으나 실패하였습니다. (for iteration " + i + "번째에서 발생.)");
 			}
 		});
@@ -129,6 +130,23 @@ class BookServiceTest {
 		// 재고가 남았으니 이건 동시성 제어를 실패한 게 아닌가? 라고 생각했지만 이건 동시성 제어를 성공한것!
 		// 왜냐하면 동시성 제어를 하는 목적은 재고는 10개인데 100명이 접근하여 재고 수보다 더 많은 갯수가 빠지게 되는 걸 방지하는 것이기 때문!
 		// 즉, 접근 실패를 하게 하였으므로 동시성 제어를 성공한 것!
+	}
+
+	@Test
+	@DisplayName("Redisson 분산 락 방법을 이용한 동시성 제어")
+	void decreaseStockWithRedisson() {
+		System.out.println("🔅🔅🔅🔅🔅🔅Redisson 분산 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		IntStream.range(0, 1000).parallel().forEach(i -> {
+			try {
+				bookService.decreaseStockWithRedisson(1L);
+			} catch (RuntimeException e) {
+				System.out.println("🧨 [" + i + "] 예외 발생 : " + e.getMessage());
+			}
+		});
+
+		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
+		System.out.println("최종 재고" + findBookAgain.getStock()); // 최종 Stock 값 출력
 	}
 
 }

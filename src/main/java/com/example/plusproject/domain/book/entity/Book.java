@@ -2,7 +2,6 @@ package com.example.plusproject.domain.book.entity;
 
 import com.example.plusproject.domain.book.dto.BookRequestDto;
 import com.example.plusproject.common.entity.BaseEntity;
-import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,9 +37,6 @@ public class Book extends BaseEntity {
     @Column
     private Double rating;  // 리뷰가 없으면 null 가능
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     /**
      * 동시성 제어 -  낙관적 락 방법
