@@ -141,6 +141,7 @@ public class BookService {
      */
     public void decreaseStockWithRedisson(Long id) {
         // 34번 째 줄에 선언한 LOCK_KEY 기준으로 공정 락(FairLock) 생성
+        // 이 때에 Redis에 연결됨! (RedisConfig에 설정되어 있다!)
         // 공정락은 먼저 락 요청한 스레드에 먼저 락을 줘서 공평하게 처리해준다
         // 일반 락은 순서 고려 안하고 운빨로 락을 얻는다
         // LOCK_KEY를 바로 입력 안해주고 굳이 필드 선언하는 이유는
@@ -148,12 +149,12 @@ public class BookService {
         // 2. 재사용성 - 여러 곳에서 LOCK_KEY를 사용하는 경우 재사용 가능
         // 3. 정책 관리 용이 - 나중에 LOCK_KEY 네이밍 전략이 바뀌는 경우 변수 하나만 고치면 됨!
         // 즉, 이렇게 해주는게 좋은 코드 습관이자 클린 코드 전략이 된다!
-        RLock lock = redissonClient.getFairLock(LOCK_KEY);
+        RLock fairLock = redissonClient.getFairLock(LOCK_KEY);
 
         try {
             // 최대 10초까지 기다렸다가 락을 얻으면 true 리턴
             // 만약 락을 얻었다면 60초간 점유 가능 (즉, 자동 만료시간이 설정된 것)
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = fairLock.tryLock(10, 60, TimeUnit.SECONDS);
 
             // 락을 성공적으로 얻었을 경우 재고 감소 로직 실행
             if (isLocked) {
@@ -176,8 +177,8 @@ public class BookService {
             // 이걸 안해주면 다음 진입하는 사용자들은 락 대기만 하다가 뻗을 수 있다
             // (위에 설정한 10초의 시간이 지나면 뻗음)
         } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
+            if (fairLock.isHeldByCurrentThread()) {
+                fairLock.unlock();
             }
         }
     }
