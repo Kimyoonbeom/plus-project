@@ -1,9 +1,7 @@
 package com.example.plusproject.domain.book.entity;
 
-import com.example.plusproject.domain.book.dto.AladinItemResponse;
 import com.example.plusproject.domain.book.dto.BookRequestDto;
 import com.example.plusproject.common.entity.BaseEntity;
-import com.example.plusproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +11,11 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "book", indexes = {
+    @Index(name = "idx_book_title", columnList = "title"),
+    @Index(name = "idx_book_author", columnList = "author"),
+    @Index(name = "idx_book_title_author", columnList = "title, author")
+})
 public class Book extends BaseEntity {
 
     @Id
@@ -23,23 +26,27 @@ public class Book extends BaseEntity {
     private String author;
     private String publisher;
 
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private LocalDate publishedAt;
     private int price;
     private int stock;
+    private String imageUrl;
 
     @Column
     private Double rating;  // 리뷰가 없으면 null 가능
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+
+    /**
+     * 동시성 제어 -  낙관적 락 방법
+     */
+    @Version
+    private int version;
 
     @Builder
     public Book(String title, String author, String publisher, String description,
-                LocalDate publishedAt, int price, int stock, User user, Double rating) {
+                LocalDate publishedAt, int price, int stock, String imageUrl, Double rating) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -47,7 +54,8 @@ public class Book extends BaseEntity {
         this.publishedAt = publishedAt;
         this.price = price;
         this.stock = stock;
-//        this.user = user;
+
+        this.imageUrl = imageUrl;
         this.rating = rating;
     }
 
@@ -62,4 +70,15 @@ public class Book extends BaseEntity {
         this.rating = rating;
     }
 
+    /**
+     * 재고 감소 로직
+     * 재고가 0이라면 예외처리
+     */
+    public void decreaseStock() {
+        if(stock <= 0) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
+
+        this.stock -= 1;
+    }
 }

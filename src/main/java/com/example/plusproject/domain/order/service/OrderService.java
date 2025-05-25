@@ -1,7 +1,7 @@
 package com.example.plusproject.domain.order.service;
 
-import org.springframework.cache.annotation.Cacheable;
-import com.example.plusproject.domain.book.repository.BookRepository;
+
+import com.example.plusproject.domain.book.service.BookService;
 import com.example.plusproject.domain.order.dto.request.OrderItemUpdateRequest;
 import com.example.plusproject.domain.order.dto.response.OrderResponse;
 import com.example.plusproject.domain.order.entity.Order;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
     // 주문 생성
     @Transactional
@@ -66,9 +66,14 @@ public class OrderService {
                         .orElseThrow(() -> new RuntimeException("주문상세를 찾을 수 없습니다."));
                 if (req.getQuantity() != null) {
                     item.setQuantity(req.getQuantity());
+
+                    // 책 재고 감소
+                    bookService.decreaseStockWithRedisson(item.getBook().getId());
                 }
             }
         }
+
+
         return order;
     }
 

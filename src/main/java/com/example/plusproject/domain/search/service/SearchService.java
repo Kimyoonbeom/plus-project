@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.plusproject.domain.book.dto.BookPageDto;
@@ -39,8 +42,8 @@ public class SearchService {
 		return queryBookRepository.findByTitleAndAuthor(keyword,pageable);
 	}
 
-	// 로컬 인메모리 사용
-	@Cacheable(value = "bookSearchLocal", key = "'SearchCache'", cacheManager = "localCacheManager")
+	// 로컬 인메모리 사용, 키워드&페이지마다 캐싱 (검색 결과가 최대한 동일하기 위해, 출간일 순으로 내림차순 + 날짜가 같을 경우 아이디 순으로 내림차순)
+	@Cacheable(value = "bookSearchLocal", key = "#keyword + ':' + #page + ':' + #size", cacheManager = "localCacheManager")
 	public Page<BookResponseDto> search2(String keyword, Integer page, Integer size) {
 		System.out.println("🧠🧠 로컬 캐시 메서드 진입 🧠🧠"); // 첫 요청에만 출력되어야 함
 		Pageable pageable = PageRequest.of(page - 1, size);
@@ -51,8 +54,8 @@ public class SearchService {
 		return queryBookRepository.findByTitleAndAuthor(keyword,pageable);
 	}
 
-	// 레디스(리모트) 인메모리 사용
-	@Cacheable(value = "bookSearchRedis", key = "'SearchCache'", cacheManager = "redisCacheManager")
+	// 레디스(리모트) 인메모리 사용, 키워드&페이지마다 캐싱 (검색 결과가 최대한 동일하기 위해, 출간일 순으로 내림차순 + 날짜가 같을 경우 아이디 순으로 내림차순)
+	@Cacheable(value = "bookSearchRedis", key = "#keyword + ':' + #page + ':' + #size", cacheManager = "redisCacheManager")
 	public BookPageDto search3(String keyword, Integer page, Integer size) {
 		System.out.println("🧠 레디스 검색 메서드 호출 진입 🧠"); // 첫 요청에만 출력되어야 함
 
@@ -69,12 +72,12 @@ public class SearchService {
 	//인기 검색어, 디비 검색
 	public List<String> getTopKeywordsWithDB(){
 		System.out.println("\uD83E\uDD55\uD83E\uDD55 인기 검색어(디비) 메서드 진입 \uD83E\uDD55\uD83E\uDD55");
-		List<KeywordCount> list = searchLogRepository.findTopKeywords(PageRequest.of(0,10));
-		// return list.stream().map(KeywordCount::getKeyword).toList();
+		List<KeywordCount> list = searchLogRepository.findTopKeywords();
+
 		return new ArrayList<>(
 			list.stream()
 				.map(KeywordCount::getKeyword)
-				.collect(Collectors.toList())
+				.toList()
 		);
 	}
 
@@ -97,5 +100,14 @@ public class SearchService {
 		searchLogRepository.save(log);
 	}
 
+	@Scheduled(fixedRate = 120000) // 2분마다 실행
+	@Caching(put = {
+		@CachePut(value = "TopKeywordLocal", key = "'Top10'", cacheManager = "localCacheManager"),
+		@CachePut(value = "TopKeywordRedis", key = "'Top10'", cacheManager = "redisCacheManager")
+	})
+	public List<String> refreshTopKeywords(){
+		System.out.println("\uD83E\uDD55\uD83E\uDD55 인기 검색어 리프레쉬~!!!!! \uD83E\uDD55\uD83E\uDD55");
+		return getTopKeywordsWithDB();
+	}
 
 }

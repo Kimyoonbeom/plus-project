@@ -1,8 +1,8 @@
 package com.example.plusproject.domain.coupon.entity;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
+import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.user.entity.User;
 
 import jakarta.persistence.Entity;
@@ -12,12 +12,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "user_coupon")
 public class UserCoupon {
 
 	@Id
@@ -31,6 +34,9 @@ public class UserCoupon {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "coupon_id",nullable = false)
 	private Coupon coupon;
+
+	@OneToOne(mappedBy = "userCoupon")
+	private Order order;
 
 	private boolean used = false;
 
