@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.StopWatch;
 
 import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
@@ -55,7 +56,9 @@ class BookServiceTest {
 	@Test
 	@DisplayName("낙관적 락을 이용한 동시성 제어")
 	void concurrencyTestDecreaseStockWithOptimisticLock() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+		stopWatch.start();
 
 		// AtomicInteger : 동시성 환경에서도 안전하게 값을 증가시킬 수 있는 Integer 클래스
 		// 즉, 낙관적 락 실패한 횟수를 정확하게 세기 위해 사용한다
@@ -67,7 +70,7 @@ class BookServiceTest {
 		// .parallel() : 이 숫자들을 쓰레드에 분산하는 과정
 		// .forEach() : 각각의 쓰레드가 1개씩 메서드를 호출!
 		// 따라서 여러 쓰레드에서 병렬로 메서드가 호출되며 동시성 이슈가 발생한다
-		IntStream.range(0, 100).parallel().forEach(i -> {
+		IntStream.range(0, 1000).parallel().forEach(i -> {
 			try {
 				bookService.decreaseStockWithOptimisticLock(1L);
 			} catch (RuntimeException e) {
@@ -76,15 +79,20 @@ class BookServiceTest {
 			}
 		});
 
+		stopWatch.stop();
 		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
 		System.out.println("최종 재고" + findBookAgain.getStock()); // 최종 Stock 값 출력
 		System.out.println("💦decreaseStock() 실패 횟수 :" + optimisticLockFailures.get());
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 	}
 
 	@Test
 	@DisplayName("낙관적 락을 이용한 동시성 제어 및 재시도 로직")
 	void concurrencyTestDecreaseStockWithOptimisticLockAndRetry() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅낙관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		stopWatch.start();
 
 		// 최대 재시도 횟수
 		final int maxRetries = 10;
@@ -95,7 +103,7 @@ class BookServiceTest {
 		// 성공 횟수
 		AtomicInteger successfulDecrements = new AtomicInteger(0);
 
-		IntStream.range(0, 100).parallel().forEach(i -> {
+		IntStream.range(0, 1000).parallel().forEach(i -> {
 
 			boolean updated = false; // false면 업데이트 실패, true면 업데이트 성공
 			int attempts = 0; // 시도 횟수
@@ -122,11 +130,12 @@ class BookServiceTest {
 			}
 		});
 
+		stopWatch.stop();
 		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
 		System.out.println("최종 재고" + findBookAgain.getStock()); // 최종 Stock 값 출력
 		System.out.println("성공적으로 감소된 횟수: " + successfulDecrements.get());
 		System.out.println("총 시도 횟수: " + totalAttempts.get());
-
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 		// 재고가 남았으니 이건 동시성 제어를 실패한 게 아닌가? 라고 생각했지만 이건 동시성 제어를 성공한것!
 		// 왜냐하면 동시성 제어를 하는 목적은 재고는 10개인데 100명이 접근하여 재고 수보다 더 많은 갯수가 빠지게 되는 걸 방지하는 것이기 때문!
 		// 즉, 접근 실패를 하게 하였으므로 동시성 제어를 성공한 것!
@@ -135,7 +144,10 @@ class BookServiceTest {
 	@Test
 	@DisplayName("Redisson 분산 락 방법을 이용한 동시성 제어")
 	void decreaseStockWithRedisson() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅Redisson 분산 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		stopWatch.start();
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			try {
@@ -145,8 +157,10 @@ class BookServiceTest {
 			}
 		});
 
+		stopWatch.stop();
 		Book findBookAgain = bookRepository.findByIdOrElseThrow(1L);
 		System.out.println("최종 재고" + findBookAgain.getStock()); // 최종 Stock 값 출력
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 	}
 
 }

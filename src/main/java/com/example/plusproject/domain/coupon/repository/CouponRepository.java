@@ -18,12 +18,12 @@ public interface CouponRepository extends JpaRepository<Coupon,Long> {
 	/**
 	 * 비관적 락
 	 * 적용 방식 : PESSIMISTIC_WRITE(락 획득 못했을 경우 접근 불가)
-	 * 데드락 방지를 위해 타임아웃 적용 (1초)
+	 * 데드락 방지를 위해 타임아웃 적용 (3초)
 	 * @param couponId
 	 * @return
 	 */
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "1000")})
+	@QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")})
 	@Query("SELECT c FROM Coupon c WHERE c.id = :couponId ORDER BY c.id")
 	Optional<Coupon> findByIdWithPessimisticLock(@Param("couponId") Long couponId);
 
