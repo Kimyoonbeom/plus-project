@@ -182,20 +182,18 @@
 
 2. **CI** (Continuous Integration)
    - **도구**: GitHub Actions
+   - 구현 기능:
+      - PR 생성 시 자동 테스트 실행
+      - 코드 정적 분석 (예: ESLint, flake8 등 프로젝트에 맞게 구성)
+      - 빌드 오류 및 테스트 실패 시 알림 제공
+      - main 브랜치 병합 전 품질 보장
 
-구현 기능:
-- PR 생성 시 자동 테스트 실행
-- 코드 정적 분석 (예: ESLint, flake8 등 프로젝트에 맞게 구성)
-- 빌드 오류 및 테스트 실패 시 알림 제공
-- main 브랜치 병합 전 품질 보장
-
-**CD** (Continuous Deployment)
-- **도구**: GitHub Actions + AWS EC2
-
-구현 기능:
-- main 브랜치에 머지되면 EC2 서버에 자동 배포
-- scp 및 ssh 명령을 통해 배포 스크립트 실행
-- Docker 컨테이너 재시작 및 무중단 배포 구성
+3. **CD** (Continuous Deployment)
+    - **도구**: GitHub Actions + AWS EC2
+    - 구현 기능:
+      - main 브랜치에 머지되면 EC2 서버에 자동 배포
+      - scp 및 ssh 명령을 통해 배포 스크립트 실행
+      - Docker 컨테이너 재시작 및 무중단 배포 구성
 
 ---
 
