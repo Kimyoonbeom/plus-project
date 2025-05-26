@@ -14,4 +14,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     default Book findByIdOrElseThrow(Long bookId) {
         return findById(bookId).orElseThrow(() -> new RuntimeException("책을 찾을 수 없습니다."));
     }
+
+    List<Book> findByTitleContaining(String title);
 }
