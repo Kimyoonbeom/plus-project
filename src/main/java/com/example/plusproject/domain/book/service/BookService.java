@@ -6,7 +6,6 @@ import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.user.entity.User;
 import com.example.plusproject.domain.user.enums.UserRole;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -73,9 +72,9 @@ public class BookService {
     })
     public void deleteBook(Long bookId, User user) {
         Book book = getBookEntity(bookId);
-
         if(!user.getUserRole().equals(UserRole.ADMIN)){
             throw new SecurityException("수정 권한이 없습니다.");
+
         }
 
         bookRepository.delete(book);

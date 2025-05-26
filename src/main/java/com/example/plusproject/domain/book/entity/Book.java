@@ -54,6 +54,7 @@ public class Book extends BaseEntity {
         this.publishedAt = publishedAt;
         this.price = price;
         this.stock = stock;
+
         this.imageUrl = imageUrl;
         this.rating = rating;
     }

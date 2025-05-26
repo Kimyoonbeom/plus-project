@@ -5,6 +5,7 @@ import com.example.plusproject.domain.book.entity.Book;
 import com.example.plusproject.domain.book.repository.BookRepository;
 import com.example.plusproject.domain.order.dto.request.OrderCreateRequest;
 import com.example.plusproject.domain.order.dto.request.OrderUpdateRequest;
+import com.example.plusproject.domain.order.dto.response.OrderResponse;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.service.OrderService;
@@ -24,7 +25,7 @@ public class OrderController {
 
     // 주문 생성 (로그인 유저만)
     @PostMapping("/orders")
-    public ResponseEntity<Order> createOrder(
+    public ResponseEntity<OrderResponse> createOrder(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody OrderCreateRequest request
     ) {
@@ -44,7 +45,9 @@ public class OrderController {
                 request.getStatus(),
                 items
         );
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        // 엔티티 → DTO 변환
+        OrderResponse response = orderService.toOrderResponse(order);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // 주문 단건 조회
@@ -53,10 +56,17 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
-    // 유저의 주문 전체 조회
+    // 유저의 주문 전체 조회(v1: 캐시 미적용)
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    }
+
+    // 유저별 주문 전체 조회 (v2: 캐시 적용, DTO 반환)
+    @GetMapping("/v2/users/{userId}/orders")
+    public ResponseEntity<List<OrderResponse>> getUserOrdersWithCache(@PathVariable Long userId) {
+        List<OrderResponse> responses = orderService.getOrdersByUserWithCache(userId);
+        return ResponseEntity.ok(responses);
     }
 
     // 주문+주문상세 복합 변경

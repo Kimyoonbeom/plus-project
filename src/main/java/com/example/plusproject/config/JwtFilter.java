@@ -38,7 +38,9 @@ public class JwtFilter implements Filter {
 		"/search",
 		"/topkeywords",
 		"/books/savebookfromaladin",
+		"/oauth2",
 		"/books/naver"
+
 	);
 
 	@Override

@@ -1,7 +1,9 @@
 package com.example.plusproject.domain.order.service;
 
+
 import com.example.plusproject.domain.book.service.BookService;
 import com.example.plusproject.domain.order.dto.request.OrderItemUpdateRequest;
+import com.example.plusproject.domain.order.dto.response.OrderResponse;
 import com.example.plusproject.domain.order.entity.Order;
 import com.example.plusproject.domain.order.entity.OrderItem;
 import com.example.plusproject.domain.order.entity.OrderStatus;
@@ -32,9 +34,18 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
     }
 
-    // 유저별 주문 전체 조회
+    // 유저별 주문 전체 조회(v1: 캐시 미적용)
     public List<Order> getOrdersByUser(Long userId) {
         return orderRepository.findByUserId(userId);
+    }
+
+    // 유저별 주문 전체 조회 (v2: 캐시 적용, DTO 반환)
+    @Cacheable(value = "userOrdersCache", key = "#userId")
+    public List<OrderResponse> getOrdersByUserWithCache(Long userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(this::toOrderResponse)
+                .toList();
     }
 
     // 주문 상태 + 주문상세(수량 등)의 수정.
@@ -70,5 +81,26 @@ public class OrderService {
     @Transactional
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    // 엔티티 → DTO 변환, 무한 반복(순환 참조) 문제 해결.
+    public OrderResponse toOrderResponse(Order order) {
+        List<OrderResponse.OrderItemResponse> itemResponses = order.getOrderItems().stream()
+                .map(item -> OrderResponse.OrderItemResponse.builder()
+                        .id(item.getId())
+                        .bookId(item.getBook().getId())
+                        .bookTitle(item.getBook().getTitle())
+                        .quantity(item.getQuantity())
+                        .price(item.getPrice())
+                        .build()
+                ).toList();
+
+        return OrderResponse.builder()
+                .id(order.getId())
+                .userId(order.getUserId())
+                .status(order.getStatus())
+                .items(itemResponses)
+                .createdAt(order.getCreatedAt())
+                .build();
     }
 }
