@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.StopWatch;
 
 import com.example.plusproject.domain.coupon.entity.Coupon;
 import com.example.plusproject.domain.coupon.enums.DiscountType;
@@ -43,7 +44,10 @@ class CouponServiceImplTest {
 	@Test
 	@DisplayName("동시성 이슈 발생")
 	void decreaseCouponQuantity() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅동시성 이슈 발생 메서드 시작🔅🔅🔅🔅🔅🔅");
+
+		stopWatch.start();
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			Coupon findCoupon = couponRepository.findById(1L).orElseThrow();
@@ -51,14 +55,19 @@ class CouponServiceImplTest {
 			couponRepository.save(findCoupon);
 		});
 
+		stopWatch.stop();
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
 		System.out.println("최종 재고 : " + findCouponAgain.getCouponQuantity());
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 	}
 
 	@Test
 	@DisplayName("비관적 락을 이용한 동시성 제어")
 	void decreaseCouponQuantityWithPessimisticLock() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		stopWatch.start();
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			try {
@@ -68,14 +77,19 @@ class CouponServiceImplTest {
 			}
 		});
 
+		stopWatch.stop();
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
 		System.out.println("최종 재고 : " + findCouponAgain.getCouponQuantity());
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 	}
 
 	@Test
 	@DisplayName("Redisson을 이용한 동시성 제어")
 	void decreaseCouponQuantityWithRedisson() {
+		StopWatch stopWatch = new StopWatch();
 		System.out.println("🔅🔅🔅🔅🔅🔅비관적 락을 이용한 동시성 제어 시작🔅🔅🔅🔅🔅🔅");
+
+		stopWatch.start();
 
 		IntStream.range(0, 1000).parallel().forEach(i -> {
 			try {
@@ -85,8 +99,10 @@ class CouponServiceImplTest {
 			}
 		});
 
+		stopWatch.stop();
 		Coupon findCouponAgain = couponRepository.findById(1L).orElseThrow();
 		System.out.println("최종 재고" + findCouponAgain.getCouponQuantity());
+		System.out.println("🕐총 걸릴 시간: " + stopWatch.getTotalTimeMillis() + "ms");
 	}
 
 }
