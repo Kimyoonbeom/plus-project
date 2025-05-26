@@ -39,7 +39,7 @@ Content-Type: application/json
 POST http://localhost:8080/search/v1?page=1&size=10&keyword=한강
 
 ### 캐시(로컬) 검색, 페이징 호출
-POST http://localhost:8080/search/v2?page=1&size=10&keyword=행복
+POST http://localhost:8080/search/v2?page=1&size=10&keyword=한강
 
 ### 캐시(레디스) 검색, 페이징 호출
 POST http://localhost:8080/search/v3?page=1&size=50&keyword=한강

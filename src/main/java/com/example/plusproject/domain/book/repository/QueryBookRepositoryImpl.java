@@ -75,7 +75,7 @@ public class QueryBookRepositoryImpl implements QueryBookRepository {
 		QBook book = QBook.book;
 
 		// 넉넉하게 필터링: 제목 또는 저자 유사한 거 다 긁어오기 (최종 필터는 자바에서!)
-		BooleanBuilder outer = new BooleanBuilder();
+		/*BooleanBuilder outer = new BooleanBuilder();
 		for (NaverBookResponse.NaverItem item : items) {
 			BooleanBuilder inner = new BooleanBuilder();
 			inner.and(book.title.contains(cleanHtml(item.getTitle())))
@@ -89,6 +89,21 @@ public class QueryBookRepositoryImpl implements QueryBookRepository {
 			.map(i -> normalizedKey(i.getTitle(), i.getAuthor()))
 			.collect(Collectors.toSet());
 
+		return dbCandidates.stream()
+			.filter(b -> incomingKeys.contains(normalizedKey(b.getTitle(), b.getAuthor())))
+			.toList();*/
+
+		// 1. Java 측에서 normalizedKey 미리 생성
+		Set<String> incomingKeys = items.stream()
+			.map(i -> normalizedKey(i.getTitle(), i.getAuthor()))
+			.collect(Collectors.toSet());
+
+		// 2. DB에서 전체 후보군 조회 (최적화를 위해 최근 N일 이내, 혹은 전체가 아닌 일부만 조회 가능)
+		List<Book> dbCandidates = queryFactory
+			.selectFrom(book)
+			.fetch();
+
+		// 3. Java에서 normalizedKey로 완전 일치하는 것만 필터링
 		return dbCandidates.stream()
 			.filter(b -> incomingKeys.contains(normalizedKey(b.getTitle(), b.getAuthor())))
 			.toList();
