@@ -279,7 +279,7 @@
 | 김윤범 | 팀원 | Order CRUD, OAuth2 | [🔗 링크](https://github.com/Kimyoonbeom/) |
 | 이소미 | 팀원 | Coupon CRUD, Indexing | [🔗 링크](https://github.com/Tcimel) |
 | 박선영 | 팀원 | Jwt Tocken, Search, Cashing | [🔗 링크](https://github.com/x0x22) |
-| 양재호 | 팀원 | Review CRUD, Concurrency Control | [🔗 jhyang22](https://github.com/jhyang22) |
+| 양재호 | 팀원 | Review CRUD, Concurrency Control | [🔗 링크](https://github.com/jhyang22) |
 
 ---
 
