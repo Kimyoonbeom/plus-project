@@ -60,6 +60,12 @@
 | **Successful**   | 4,175        | 19,578           | 18,586         |
 | **Errors**       | 0            | 4,397            | 6,958          |
 
+**캐싱 적용 전**
+![image](https://github.com/user-attachments/assets/104824d6-f561-4d6e-bc9d-86baf1f8106b)
+
+**캐싱 적용 후**
+![image](https://github.com/user-attachments/assets/90d1e448-40fe-4736-a472-d3265453ee80)
+
 **📈 인사이트**
 - **평균 응답 속도**: DB 대비 Redis는 약 **75% 이상 속도 개선** (1,884ms → 474ms)
 - **TPS (초당 처리량)**: Redis는 DB 대비 **4배 이상 높은 TPS**
