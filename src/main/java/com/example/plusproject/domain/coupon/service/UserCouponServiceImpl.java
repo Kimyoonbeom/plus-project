@@ -1,7 +1,11 @@
 package com.example.plusproject.domain.coupon.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.plusproject.domain.coupon.dto.response.UserCouponResponseDto;
@@ -72,5 +76,19 @@ public class UserCouponServiceImpl implements UserCouponService {
 			saved.isUsed(),
 			saved.getIssuedAt()
 		);
+	}
+
+	@Override
+	public Page<UserCouponResponseDto> getUserCoupons(Long userId, Pageable pageable) {
+
+		Page<UserCoupon> page = userCouponRepository.findByUser_Id(userId, pageable);
+
+		return page.map(coupon -> new UserCouponResponseDto(
+				coupon.getId(),
+				coupon.getCoupon().getName(),
+				coupon.getCoupon().getDiscountType(),
+				coupon.isUsed(),
+				coupon.getIssuedAt()
+			));
 	}
 }
